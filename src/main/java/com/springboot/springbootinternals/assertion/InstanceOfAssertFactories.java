@@ -10,8 +10,8 @@ public interface InstanceOfAssertFactories {
     /**
      * InstanceOfAssertFactory for a Predicate, assuming Object as input type
      */
-//    @SuppressWarnings("rawtypes")
-//    InstanceOfAssertFactory<Predicate, PredicateAssert<Object>> PREDICATE = predicate(Object.class);
+    @SuppressWarnings("rawtypes")
+    InstanceOfAssertFactory<Predicate, PredicateAssert<Object>> PREDICATE = predicate(Object.class);
 
     /**
      * InstanceOfAssertFactory for a Predicate
@@ -19,8 +19,8 @@ public interface InstanceOfAssertFactories {
      * @param <T>
      * @return
      */
-//    static <T> InstanceOfAssertFactory<Predicate, PredicateAssert<T>> predicate(Class<T> type) {
-//        return new InstanceOfAssertFactory<>(Predicate.class, Assertions::<T> assertJack);
-//    }
+    static <T> InstanceOfAssertFactory<Predicate, PredicateAssert<T>> predicate(Class<T> type) {
+        return new InstanceOfAssertFactory<>(Predicate.class, Assertions::<T> assertJack);
+    }
 
 }

@@ -2,8 +2,12 @@ package com.springboot.springbootinternals.assertion;
 
 import java.util.function.Predicate;
 
-// TODO : need to implement
-public class Assertions {
+@CheckReturnValue
+public class Assertions implements InstanceOfAssertFactories {
+
+    public static <T> PredicateAssert<T> assertJack(Predicate<T> actual) {
+        return new PredicateAssert<>(actual);
+    }
 
 
 }
