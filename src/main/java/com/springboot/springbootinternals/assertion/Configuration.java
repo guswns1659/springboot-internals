@@ -19,12 +19,12 @@ public class Configuration {
 
     }
 
-    // TODO : impl
+    // 구현하려고 했으니 현 상황에 불필요
     private String describe() {
         return "";
     }
 
-    // TODO : impl
+    // 구현하려고 했으니 현 상황에 불필요
     private void apply() {
 
     }

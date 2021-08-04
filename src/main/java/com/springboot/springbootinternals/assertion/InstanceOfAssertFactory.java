@@ -8,12 +8,12 @@ import static java.util.Objects.requireNonNull;
  */
 public class InstanceOfAssertFactory<T, ASSERT extends AbstractAssert<?, ?>> implements AssertFactory<Object, ASSERT> {
 
-    private final Class<T> type;
+//    private final Class<T> type;
     private final AssertFactory<T, ASSERT> assertFactory;
 
     // TODO : ShouldNotBeNull
     public InstanceOfAssertFactory(Class<T> type, AssertFactory<T, ASSERT> assertFactory) {
-        this.type = requireNonNull(type, "type");
+//        this.type = requireNonNull(type, shouldNotBeNull("type").create());
         this.assertFactory = requireNonNull(assertFactory, "assertFactory");
     }
 
