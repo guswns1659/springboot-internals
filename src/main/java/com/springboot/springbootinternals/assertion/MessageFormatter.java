@@ -1,6 +1,8 @@
 package com.springboot.springbootinternals.assertion;
 
+import static com.springboot.springbootinternals.assertion.Strings.formatIfArgs;
 import static java.util.Objects.requireNonNull;
+import com.springboot.springbootinternals.assertion.internal.AbstractComparisonStrategy;
 
 public class MessageFormatter {
 
@@ -9,28 +11,26 @@ public class MessageFormatter {
     @VisibleForTesting
     DescriptionFormatter descriptionFormatter = DescriptionFormatter.instance();
 
-    // TODO :
-//    public String format(Description d, Represetation p, String format, Object... args) {
-//        requireNonNull(format);
-//        requireNonNull(args);
-//        return descriptionFormatter.format(d) + formatIfArgs(format, format(p, args));
-//    }
+    public String format(Description d, Representation p, String format, Object... args) {
+        requireNonNull(format);
+        requireNonNull(args);
+        return descriptionFormatter.format(d) + formatIfArgs(format, format(p, args));
+    }
 
-    // TODO :
-//    private Object[]  format(Represetation p, Object[] args) {
-//        int argCount = args.length;
-//        String[] formatted = new String[argCount];
-//        for (int i = 0; i < argCount; i++) {
-//            formatted[i] = asText(p, args[i]);
-//        }
-//        return formatted;
-//    }
+    private Object[] format(Representation p, Object[] args) {
+        int argCount = args.length;
+        String[] formatted = new String[argCount];
+        for (int i = 0; i < argCount; i++) {
+            formatted[i] = asText(p, args[i]);
+        }
+        return formatted;
+    }
 
-    // TODO:
-//    private String asText(Represetation p, Object arg) {
-//        if (arg instanceof AbstractComparisonStrategy) {
-//            return
-//        }
-//    }
+    private String asText(Representation p, Object o) {
+        if (o instanceof AbstractComparisonStrategy) {
+            return ((AbstractComparisonStrategy) o).asText();
+        }
+        return p.toStringOf(o);
+    }
 
 }

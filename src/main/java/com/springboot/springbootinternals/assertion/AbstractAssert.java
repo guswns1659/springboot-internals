@@ -10,7 +10,7 @@ public abstract class AbstractAssert<SELF extends AbstractAssert<SELF, ACTUAL>, 
     protected final SELF myself;
 
     // = ConfigurationProvider.CONFIGURATION_PROVIDER.representation(); ?
-    private static Represetation customRepresentation = null;
+    private static Representation customRepresentation = null;
 
 
 

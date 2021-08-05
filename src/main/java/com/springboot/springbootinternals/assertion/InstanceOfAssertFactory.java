@@ -1,5 +1,6 @@
 package com.springboot.springbootinternals.assertion;
 
+import static com.springboot.springbootinternals.assertion.ShouldNotBeNull.shouldNotBeNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -8,12 +9,11 @@ import static java.util.Objects.requireNonNull;
  */
 public class InstanceOfAssertFactory<T, ASSERT extends AbstractAssert<?, ?>> implements AssertFactory<Object, ASSERT> {
 
-//    private final Class<T> type;
+    private final Class<T> type;
     private final AssertFactory<T, ASSERT> assertFactory;
 
-    // TODO : ShouldNotBeNull
     public InstanceOfAssertFactory(Class<T> type, AssertFactory<T, ASSERT> assertFactory) {
-//        this.type = requireNonNull(type, shouldNotBeNull("type").create());
+        this.type = requireNonNull(type, shouldNotBeNull("type").create());
         this.assertFactory = requireNonNull(assertFactory, "assertFactory");
     }
 

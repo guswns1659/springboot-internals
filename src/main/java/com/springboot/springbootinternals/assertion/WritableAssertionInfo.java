@@ -8,14 +8,14 @@ import static java.util.Objects.requireNonNull;
  */
 public class WritableAssertionInfo implements AssertionInfo {
 
-    private Represetation representation;
+    private Representation representation;
 
-    public WritableAssertionInfo(Represetation customRepresentation) {
+    public WritableAssertionInfo(Representation customRepresentation) {
         useRepresentation(
             customRepresentation == null ? CONFIGURATION_PROVIDER.representation() : customRepresentation);
     }
 
-    public void useRepresentation(Represetation newRepresentation) {
+    public void useRepresentation(Representation newRepresentation) {
         requireNonNull(newRepresentation, "The representation to use should not be null.");
         representation = newRepresentation;
     }

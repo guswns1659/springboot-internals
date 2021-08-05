@@ -10,11 +10,11 @@ import static java.lang.String.format;
 public final class ConfigurationProvider {
 
     public static final ConfigurationProvider CONFIGURATION_PROVIDER = new ConfigurationProvider();
-    private final Represetation representation;
+    private final Representation representation;
     private final Configuration configuration;
 
     private ConfigurationProvider() {
-        representation = Services.get(Represetation.class, STANDARD_REPRESENTATION);
+        representation = Services.get(Representation.class, STANDARD_REPRESENTATION);
         if (representation != STANDARD_REPRESENTATION) {
             System.err.println(format("Although it still works, registering a Representation through a file named 'org.assertj.core.presentation.Representation' in the META-INF/services directory is deprecated.%n"
                 + "The proper way of providing a Representation is to register a Configuration as described in the documentation (a Configuration allowing to provide a Representation and other AssertJ configuration elements)"));
@@ -25,7 +25,7 @@ public final class ConfigurationProvider {
         }
     }
 
-    public Represetation representation() {
+    public Representation representation() {
         return configuration.hasCustomRepresentation() ? configuration.representation() : representation;
     }
 }

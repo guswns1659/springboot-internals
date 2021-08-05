@@ -33,7 +33,7 @@ public class Configuration {
         return representation() != STANDARD_REPRESENTATION;
     }
 
-    public Represetation representation() {
+    public Representation representation() {
         return STANDARD_REPRESENTATION;
     }
 }
