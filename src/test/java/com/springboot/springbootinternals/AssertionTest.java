@@ -1,5 +1,7 @@
 package com.springboot.springbootinternals;
 
+import static com.springboot.springbootinternals.assertj.core.api.Assertions.assertJack;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +14,8 @@ public class AssertionTest {
         // given
 
         // when
-//        assertjack(3).isEqualTo(3);
+//        assertJack(3).isEqualTo(3);
+//        assertThat(3).isEqualTo(3);
 
         // then
     }
