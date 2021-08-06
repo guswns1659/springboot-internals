@@ -12,10 +12,10 @@ public class AssertionTest {
     @DisplayName("assertJack_isEqualTo 테스트")
     public void assertjack_isEqualTo() {
         // given
+        BiggerThatFive<Integer> biggerThatFive = new BiggerThatFive<>();
 
         // when
-//        assertJack(3).isEqualTo(3);
-//        assertThat(3).isEqualTo(3);
+        assertJack(biggerThatFive).isEqualTo(5);
 
         // then
     }

@@ -3,7 +3,6 @@ package com.springboot.springbootinternals.assertj.core.configuration;
 import static com.springboot.springbootinternals.assertj.core.configuration.Configuration.DEFAULT_CONFIGURATION;
 import static com.springboot.springbootinternals.assertj.core.presentation.StandardRepresentation.STANDARD_REPRESENTATION;
 import static java.lang.String.format;
-import com.springboot.springbootinternals.assertj.core.Services;
 import com.springboot.springbootinternals.assertj.core.presentation.Representation;
 
 /**
