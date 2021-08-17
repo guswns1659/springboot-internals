@@ -20,5 +20,14 @@ public class AssertionTest {
         // then
     }
 
+    @Test
+    @DisplayName("assertJack_Integer_isEqualTo 테스트")
+    public void integer_isEqualTo() {
+        // given
 
+        // when
+//        assertJack(3).isEqualTo(3);
+
+        // then
+    }
 }

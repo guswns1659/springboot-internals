@@ -8,6 +8,7 @@ public class AssertionsForClassTypes {
     /**
      * Creates a new instance of IntegerAssert
      */
-    // TODO :
-
+    public static AbstractIntegerAssert<?> assertJack(int actual) {
+        return new IntegerAssert(actual);
+    }
 }

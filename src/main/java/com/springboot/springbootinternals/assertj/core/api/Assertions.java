@@ -10,10 +10,9 @@ public class Assertions implements InstanceOfAssertFactories {
         return new PredicateAssert<>(actual);
     }
 
-    // TODO :
-//    public static AbstractIntegerAssert<?> assertJack(int actual) {
-//        return AssertionsForClassTypes.assertJack(actual);
-//    }
+    public static AbstractIntegerAssert<?> assertJack(int actual) {
+        return AssertionsForClassTypes.assertJack(actual);
+    }
 
 
 }

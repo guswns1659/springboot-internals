@@ -1,7 +1,5 @@
 package com.springboot.springbootinternals.assertj.core.internal;
 
-// TODO :
-public interface ComparisonStrategy {
-
+public interface WholeNumbers<NUMBER extends Number> {
 
 }
