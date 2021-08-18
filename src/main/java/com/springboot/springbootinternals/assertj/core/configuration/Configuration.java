@@ -11,6 +11,8 @@ public class Configuration {
     // default values
     public static final Configuration DEFAULT_CONFIGURATION = new Configuration();
 
+    public static final boolean REMOVE_ASSERTJ_RELATED_ELEMENTS_FROM_STACK_TRACE = true;
+
     /**
      * Applies this configuration to AssertJ and prints it.
      */

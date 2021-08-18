@@ -11,6 +11,10 @@ public class MessageFormatter {
 
     public static final MessageFormatter INSTANCE = new MessageFormatter();
 
+    public static MessageFormatter instance() {
+        return INSTANCE;
+    }
+
     @VisibleForTesting
     DescriptionFormatter descriptionFormatter = DescriptionFormatter.instance();
 

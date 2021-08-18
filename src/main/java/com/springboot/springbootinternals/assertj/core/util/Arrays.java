@@ -13,4 +13,6 @@ public class Arrays {
         return array.length == 0;
     }
 
+
+
 }

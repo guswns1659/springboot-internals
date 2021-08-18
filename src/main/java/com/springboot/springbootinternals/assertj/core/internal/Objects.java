@@ -18,8 +18,7 @@ public class Objects {
         return INSTANCE;
     }
 
-    // TODO :
-//    public void assertNotNull(AssertionInfo info, Object actual) {
-//        if (actual == null) throw Failures.failure(info, shouldNotBeNull());
-//    }
+    public void assertNotNull(AssertionInfo info, Object actual) {
+        if (actual == null) throw failures.failure(info, shouldNotBeNull());
+    }
 }

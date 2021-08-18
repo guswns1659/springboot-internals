@@ -4,7 +4,7 @@ import static java.lang.String.format;
 
 public final class Strings {
 
-    public static boolean isNullOfEmpty(String s) {
+    public static boolean isNullOrEmpty(String s) {
         return s == null || s.length() == 0;
     }
 
