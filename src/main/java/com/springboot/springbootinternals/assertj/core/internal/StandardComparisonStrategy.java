@@ -16,9 +16,8 @@ public class StandardComparisonStrategy extends AbstractComparisonStrategy{
         return "";
     }
 
-    // TODO :
     @Override
     public boolean areEqual(Object actual, Object expected) {
-        return false;
+        return java.util.Objects.deepEquals(actual, expected);
     }
 }
