@@ -11,7 +11,7 @@ public class Throwables {
 
     public static final String ORG_ASSERTJ = "org.assert";
 
-    // Notes :
+    // Notes : how to remove messageElements from stackTrace
 
     /**
      * Removes the AssertJ-related elements from the Throwable stack trace that have little value for end user.

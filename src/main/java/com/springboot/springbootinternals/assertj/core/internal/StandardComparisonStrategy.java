@@ -15,4 +15,9 @@ public class StandardComparisonStrategy extends AbstractComparisonStrategy{
     public String asText() {
         return "";
     }
+
+    @Override
+    public boolean areEqual(Object actual, Object expected) {
+        return false;
+    }
 }

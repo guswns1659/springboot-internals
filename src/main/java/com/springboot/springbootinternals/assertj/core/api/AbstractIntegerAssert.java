@@ -16,11 +16,13 @@ public abstract class AbstractIntegerAssert<SELF extends AbstractIntegerAssert<S
         super(actual, selfType);
     }
 
-    // TODO :
-//    public SELF isEqualTo(int expected) {
-//        integers.assertEqual(info, actual, expected);
-//        return myself;
-//    }
-
-
+    /**
+     * Verifies that the actual value is equal to the given one.
+     * @param expected - the given value to compare the actual value to
+     * @return - this assertion object
+     */
+    public SELF isEqualTo(int expected) {
+        integers.assertEqual(info, actual, expected);
+        return myself;
+    }
 }
