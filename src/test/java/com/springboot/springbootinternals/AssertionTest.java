@@ -26,7 +26,7 @@ public class AssertionTest {
         // given
 
         // when
-        assertJack(3).isEqualTo(4);
+        assertJack(3).isEqualTo(3);
 //        assertThat(3).isEqualTo(4);
 
         // then
