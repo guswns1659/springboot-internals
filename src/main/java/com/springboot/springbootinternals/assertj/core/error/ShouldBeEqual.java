@@ -4,6 +4,7 @@ import com.springboot.springbootinternals.assertj.core.description.Description;
 import com.springboot.springbootinternals.assertj.core.internal.ComparisonStrategy;
 import com.springboot.springbootinternals.assertj.core.internal.Failures;
 import com.springboot.springbootinternals.assertj.core.presentation.Representation;
+import java.util.Objects;
 
 public class ShouldBeEqual implements AssertionErrorFactory {
 
@@ -19,7 +20,8 @@ public class ShouldBeEqual implements AssertionErrorFactory {
         return new ShouldBeEqual(actual, expected, comparisonStrategy, representation);
     }
 
-    protected ShouldBeEqual(Object actual, Object expected, ComparisonStrategy comparisonStrategy, Representation representation) {
+    protected ShouldBeEqual(Object actual, Object expected, ComparisonStrategy comparisonStrategy,
+        Representation representation) {
         this.actual = actual;
         this.expected = expected;
         this.comparisonStrategy = comparisonStrategy;
@@ -29,24 +31,48 @@ public class ShouldBeEqual implements AssertionErrorFactory {
     // TODO
     @Override
     public AssertionError newAssertionError(Description description, Representation representation) {
+        /*String message = smartErrorMessage(description, representation);
+        // only use JUnit error message if the comparison strategy used was standard, otherwise we need to mention
+        // comparison strategy in the assertion error message to make it clear to the user it was used.
+        if (comparisonStrategy.isStandard() && !actualAndExpectedHaveSameStringRepresentation()) {
+            // comparison strategy is standard -> try to build an AssertionFailedError used in JUnit 5 that is nicely displayed in IDEs
+            AssertionError assertionFailedError = assertionFailedError(message, representation);
+            // assertionFailedError != null means that JUnit 5 and opentest4j are in the classpath
+            if (assertionFailedError != null) {
+                return assertionFailedError;
+            }
+            // Junit5 was not used, try to build a JUnit 4 ComparisonFailure that is nicely displayed in IDEs
+            AssertionError error = comparisonFailure(description);
+            // error != null means that JUnit 4 was in the classpath and we build a ComparisonFailure.
+            if (error != null) {
+                return error;
+            }
+        }
+        AssertionError assertionFailedError = assertionFailedError(message, representation);
+        // assertionFailedError != null means that JUnit 5 and opentest4j was in the classpath
+        if (assertionFailedError != null) {
+            return assertionFailedError;
+        }
+        // No JUnit in the classpath => fall back to default error message
+        return Failures.instance().failure(message)*/
         return null;
-//        String message = smartErrorMessage(description, representation);
-//        // only use JUnit error message if the comparison strategy used was standard, otherwise we need to mention
-//        // comparison strategy in the assertion error message to make it clear to the user it was used.
-//        if (comparisonStrategy.isStandard() && !actualAndExpectedHaveSameStringRepresentation()) {
-//            // comparison strategy is standard -> try to build an AssertionFailedError used in JUnit 5 that is nicely displayed in IDEs
-//            AssertionError assertionFailedError = assertionFailedError(message, representation);
-//            // assertionFailedError != null means that JUnit 5 and opentest4j are in the classpath
-//            if (assertionFailedError != null) return assertionFailedError;
-//            // Junit5 was not used, try to build a JUnit 4 ComparisonFailure that is nicely displayed in IDEs
-//            AssertionError error = comparisonFailure(description);
-//            // error != null means that JUnit 4 was in the classpath and we build a ComparisonFailure.
-//            if (error != null) return error;
+    }
+
+    /**
+     * Builds and returns an error message from the given description using expected and actual basic
+     * representation if their description differ therwise use defaultDetailedErrorMessage to represent them differently.
+     *
+     */
+    // TODO :
+    protected String smartErrorMessage(Description description, Representation representation) {
+//        if (actualAndExpectedHaveSameStringRepresentation()) {
+//            return
 //        }
-//        AssertionError assertionFailedError = assertionFailedError(message, representation);
-//        // assertionFailedError != null means that JUnit 5 and opentest4j was in the classpath
-//        if (assertionFailedError != null) return assertionFailedError;
-//        // No JUnit in the classpath => fall back to default error message
-//        return Failures.instance().failure(message)
+        return null;
+
+    }
+
+    protected boolean actualAndExpectedHaveSameStringRepresentation() {
+        return Objects.equals(representation.toStringOf(actual), representation.toStringOf(expected));
     }
 }
