@@ -37,7 +37,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-@EmbeddedKafka
+@EmbeddedKafka(partitions = 3)
 @SpringBootTest
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)

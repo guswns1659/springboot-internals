@@ -6,7 +6,7 @@ spring:
 
   kafka:
     jack:
-      bootstrap-servers: "localhost:53285"
+      bootstrap-servers: ${spring.embedded.kafka.brokers}
       authentication:
         username: "jack"
         password: "jack"

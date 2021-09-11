@@ -18,7 +18,7 @@ public class JackProducer {
 
     public JackProducer(
         KafkaTemplate<String, String> jackKafkaTemplate,
-        @Value("${spring.kafka.jack.topics.jack-topic") String jackTopic) {
+        @Value("${spring.kafka.jack.topics.jack-topic:jack}") String jackTopic) {
         this.jackKafkaTemplate = jackKafkaTemplate;
         this.jackTopic = jackTopic;
     }
