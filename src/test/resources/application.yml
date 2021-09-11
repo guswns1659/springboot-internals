@@ -11,4 +11,4 @@ spring:
         username: "jack"
         password: "jack"
         topics:
-          jack-topic: "jack"
+          jack-topic: "jack123"

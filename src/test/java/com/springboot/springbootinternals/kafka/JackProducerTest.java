@@ -1,7 +1,5 @@
 package com.springboot.springbootinternals.kafka;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,17 +8,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -46,20 +43,24 @@ public class JackProducerTest {
     private static final String TOPIC = "jack";
     BlockingQueue<ConsumerRecord<String, String>> records;
     KafkaMessageListenerContainer<String, String> container;
+    private Logger log = LoggerFactory.getLogger(JackProducerTest.class);
+
+    @Autowired
     private ProducerFactory<String, String> jackProducerFactory;
-    private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired
     private KafkaTemplate<String, String> jackKafkaTemplate;
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
 
-    @Value("${spring.embedded.kafka.brokers}")
-    private String brokerAddresses;
-
     @BeforeEach
     void setUP() {
+        // broker setting
         embeddedKafkaBroker.addTopics("jack123");
 
+        // producer setting
+        jackKafkaTemplate = new KafkaTemplate<>(jackProducerFactory);
+
+        // consumer setting
         Map<String, Object> configs = new HashMap<>(
             KafkaTestUtils.consumerProps("consumer", "false", embeddedKafkaBroker));
         DefaultKafkaConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory<>(
@@ -71,10 +72,6 @@ public class JackProducerTest {
         container.start();
         ContainerTestUtils.waitForAssignment(container, embeddedKafkaBroker.getPartitionsPerTopic());
 
-        Map<String, Object> pConfigs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafkaBroker));
-        jackProducerFactory = new DefaultKafkaProducerFactory<>(pConfigs, new StringSerializer(),
-            new StringSerializer());
-        jackKafkaTemplate = new KafkaTemplate<>(jackProducerFactory);
     }
 
     @AfterEach
@@ -91,21 +88,25 @@ public class JackProducerTest {
         System.out.println(">>>>>>>>>>>>>" + Arrays.toString(brokerAddresses));
 
         // when
-        ListenableFuture<SendResult<String, String>> future = jackKafkaTemplate.send("jack123", "key", "data");
-        future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
-            @Override
-            public void onFailure(Throwable ex) {
+        for (int i = 0; i < 1001; i++) {
+            ListenableFuture<SendResult<String, String>> future = jackKafkaTemplate
+                .send("jack123", "key", "data" + i);
+            int finalI = i;
+            future.addCallback(new ListenableFutureCallback<>() {
+                @Override
+                public void onFailure(Throwable ex) {
+                    log.error("Fail to producing to jack Topic, errorMessage = {}",
+                        ex.getMessage());
+                }
 
-            }
+                @Override
+                public void onSuccess(SendResult<String, String> result) {
+                    log.info(">>>>>>>> success" + finalI);
+                }
+            });
 
-            @Override
-            public void onSuccess(SendResult<String, String> result) {
-                System.out.println(">>>>> success");
-
-            }
-        });
+        }
 
         // then
-//        assertThat(stringStringSendResult.getRecordMetadata().offset()).isEqualTo(0);
     }
 }

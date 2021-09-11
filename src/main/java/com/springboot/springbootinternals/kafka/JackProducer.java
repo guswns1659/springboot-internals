@@ -1,5 +1,8 @@
 package com.springboot.springbootinternals.kafka;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -42,7 +45,8 @@ public class JackProducer {
             @Override
             public void onSuccess(SendResult<String, String> result) {
                 log.info("Success Producing to jack topic, offset = {}, when = {}",
-                    result.getRecordMetadata().offset(), result.getRecordMetadata().timestamp());
+                    result.getRecordMetadata().offset(),
+                    LocalDateTime.ofInstant(Instant.ofEpochMilli(result.getRecordMetadata().timestamp()), (ZoneId.of("Asia/Seoul"))));
             }
         });
     }
