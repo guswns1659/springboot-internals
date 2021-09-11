@@ -10,6 +10,6 @@ public class ConstructorInvoker {
     public Object newInstance(String className, Class<?>[] parameterTypes, Object... parameterValues) throws Exception {
         Class<?> targetType = Class.forName(className);
         Constructor<?> constructor = targetType.getConstructor(parameterTypes);
-        return constructor.newInstance(parameterTypes);
+        return constructor.newInstance((Object) parameterTypes);
     }
 }

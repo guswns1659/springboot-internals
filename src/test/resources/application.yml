@@ -6,7 +6,7 @@ spring:
 
   kafka:
     jack:
-      bootstrap-servers: "localhost:52632"
+      bootstrap-servers: "localhost:53285"
       authentication:
         username: "jack"
         password: "jack"
