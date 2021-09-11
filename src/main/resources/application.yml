@@ -1,0 +1,12 @@
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  kafka:
+    jack:
+      bootstrap-servers: "localhost:1234"
+      authentication:
+        username: "jack"
+        password: "jack"
