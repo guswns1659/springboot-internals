@@ -4,11 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class CompletableFutureTest {
 
     @Test
+    @DisplayName("thenApply, thenAccept, thenRun")
     void completableFuture_tutorial() throws ExecutionException, InterruptedException {
 
         // thenApply = Function<T, R># R apply(T t)
@@ -29,5 +31,28 @@ public class CompletableFutureTest {
             .thenRun(() -> System.out.println(">>>>>" + Thread.currentThread()));
 
         voidCompletableFuture1.get();
+    }
+
+    @Test
+    @DisplayName("thenCompose, thenCombine")
+    void completableFuture_tutorial2() throws ExecutionException, InterruptedException {
+
+        // thenCompose
+        CompletableFuture<String> stringCompletableFuture = CompletableFuture.supplyAsync(() -> "thenCompose")
+            .thenCompose(s -> CompletableFuture.supplyAsync(() -> s + "test"));
+
+        assertThat(stringCompletableFuture.get()).isEqualTo("thenComposetest");
+
+        // thenCombine
+        CompletableFuture<String> stringCompletableFuture1 = CompletableFuture.supplyAsync(() -> "thenCombine")
+            .thenCombine(CompletableFuture.supplyAsync(() -> " hello"), (s1, s2) -> s1 + s2);
+
+        assertThat(stringCompletableFuture1.get()).isEqualTo("thenCombine hello");
+
+        // thenAcceptBoth
+        CompletableFuture<Void> voidCompletableFuture = CompletableFuture.supplyAsync(() -> "Hello")
+            .thenAcceptBoth(CompletableFuture.supplyAsync(() -> " world"),
+                (s1, s2) -> System.out.println(s1 + s2));
+
     }
 }
