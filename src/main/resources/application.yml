@@ -10,3 +10,5 @@ spring:
       authentication:
         username: "jack"
         password: "jack"
+        topics:
+          jack-topic: "jack"
