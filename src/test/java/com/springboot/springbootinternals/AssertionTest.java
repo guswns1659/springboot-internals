@@ -31,11 +31,8 @@ public class AssertionTest {
 
         // when
 //        assertJack(3).isEqualTo(3);
-//        assertJack(3).isEqualTo(4);
+        assertJack(3).isEqualTo(4);
 //        assertThat(3).isEqualTo(4);
-        System.out.println(LocalDateTime.now().toString());
-        System.out.println(Calendar.getInstance().toString());
-        System.out.println(3);
 
         // then
     }

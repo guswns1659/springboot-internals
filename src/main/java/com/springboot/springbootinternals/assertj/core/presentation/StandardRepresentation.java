@@ -2,6 +2,7 @@ package com.springboot.springbootinternals.assertj.core.presentation;
 
 import static java.lang.Integer.toHexString;
 
+import com.springboot.springbootinternals.assertj.core.internal.ComparatorBasedComparisonStrategy;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,13 @@ public class StandardRepresentation implements Representation {
     private static final Class<?>[] TYPE_WITH_UNAMBIGUOUS_REPRESENTATION = {Date.class, LocalDateTime.class,
         ZonedDateTime.class, OffsetDateTime.class, Calendar.class};
 
+    private static Object classNameOf(Object obj) {
+        return obj.getClass().isAnonymousClass() ? obj.getClass().getName() : obj.getClass().getSimpleName();
+    }
+
+    private static String identityHexCodeOf(Object obj) {
+        return toHexString(System.identityHashCode(obj));
+    }
 
     protected boolean hasCustomFormatterFor(Object object) {
         if (object == null) {
@@ -56,8 +64,6 @@ public class StandardRepresentation implements Representation {
         return ((Function<T, String>) customFormatterByType.get(object.getClass())).apply(object);
     }
 
-    // TODO
-
     /**
      * Returns standard the toString representation of the given object. it may or not the object's own
      * implementation of toString
@@ -73,7 +79,9 @@ public class StandardRepresentation implements Representation {
         if (hasCustomFormatterFor(object)) {
             return customFormat(object);
         }
-//        if (object instanceof ComparatorBasedComparisonStrategy) return toStringOf((ComparatorBasedComparisonStrategy) object);
+        if (object instanceof ComparatorBasedComparisonStrategy) {
+            return toStringOf((ComparatorBasedComparisonStrategy) object);
+        }
         if (object instanceof Calendar) {
             return toStringOf((Calendar) object);
         }
@@ -174,21 +182,28 @@ public class StandardRepresentation implements Representation {
         return fallbackToStringOf(object);
     }
 
+    protected String toStringOf(Number number) {
+        if (number instanceof Float) return toStringOf((Float) number);
+        if (number instanceof Long) return toStringOf((Long) number);
+        return number.toString();
+    }
+
+    protected String toStringOf(Long l) {
+        return String.format("%sL", l);
+    }
+
+    protected String toStringOf(Float f) {
+        return String.format("%sf", f);
+    }
+
     @Override
     public String unambiguousToStringOf(Object object) {
         // some types have already an unambiguous toSting, no need to double down
         if (hasAlreadyUnambiguousToStringOf(object)) {
             return toStringOf(object);
         }
-        return object == null ? null : String.format("%s (%s@%s)", toStringOf(object), classNameOf(object), identityHexCodeOf(object));
-    }
-
-    private static Object classNameOf(Object obj) {
-        return obj.getClass().isAnonymousClass() ? obj.getClass().getName() : obj.getClass().getSimpleName();
-    }
-
-    private static String identityHexCodeOf(Object obj) {
-        return toHexString(System.identityHashCode(obj));
+        return object == null ? null
+            : String.format("%s (%s@%s)", toStringOf(object), classNameOf(object), identityHexCodeOf(object));
     }
 
     /**
@@ -199,10 +214,11 @@ public class StandardRepresentation implements Representation {
      */
     protected boolean hasAlreadyUnambiguousToStringOf(Object object) {
         for (Class<?> aClass : TYPE_WITH_UNAMBIGUOUS_REPRESENTATION) {
-            if (aClass.isInstance(object))
+            if (aClass.isInstance(object)) {
                 return true;
+            }
         }
-        return true;
+        return false;
     }
 
     /**

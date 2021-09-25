@@ -79,15 +79,17 @@ public class ShouldBeEqual implements AssertionErrorFactory {
      */
     protected String defaultDetailedErrorMessage(Description description, Representation representation) {
         if (comparisonStrategy instanceof ComparatorBasedComparisonStrategy) {
-//            return messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR,
-//                detailedExpected(), detailedActual(), comparisonStrategy);
-            return null;
+            return messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR,
+                detailedExpected(), detailedActual(), comparisonStrategy);
         }
-
-        return null;
+        return messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE, detailedExpected(), detailedActual());
     }
 
     protected String detailedExpected() {
         return representation.unambiguousToStringOf(expected);
+    }
+
+    protected String detailedActual() {
+        return representation.unambiguousToStringOf(actual);
     }
 }
