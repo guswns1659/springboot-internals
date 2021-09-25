@@ -1,12 +1,15 @@
 package com.springboot.springbootinternals.assertj.core.error;
 
 import com.springboot.springbootinternals.assertj.core.description.Description;
+import com.springboot.springbootinternals.assertj.core.internal.ComparatorBasedComparisonStrategy;
 import com.springboot.springbootinternals.assertj.core.internal.ComparisonStrategy;
 import com.springboot.springbootinternals.assertj.core.presentation.Representation;
 import java.util.Objects;
 
 public class ShouldBeEqual implements AssertionErrorFactory {
 
+    private static final String EXPECTED_BUT_WAS_MESSAGE = "%nexpected: %s%nbut was : %s";
+    public static final String EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR = EXPECTED_BUT_WAS_MESSAGE + "%n%s";
     protected final Object actual;
     protected final Object expected;
     protected final MessageFormatter messageFormatter = MessageFormatter.instance();
@@ -67,8 +70,24 @@ public class ShouldBeEqual implements AssertionErrorFactory {
         return Objects.equals(representation.toStringOf(actual), representation.toStringOf(expected));
     }
 
-    // TODO(jack.comdback) : first
+    /**
+     * Builds and returns an error message from description using detailedExpected() and detailed representation.
+     *
+     * @param description
+     * @param representation
+     * @return
+     */
     protected String defaultDetailedErrorMessage(Description description, Representation representation) {
+        if (comparisonStrategy instanceof ComparatorBasedComparisonStrategy) {
+//            return messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR,
+//                detailedExpected(), detailedActual(), comparisonStrategy);
+            return null;
+        }
+
         return null;
+    }
+
+    protected String detailedExpected() {
+        return representation.unambiguousToStringOf(expected);
     }
 }
