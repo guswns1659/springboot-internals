@@ -49,14 +49,26 @@ public class ShouldBeEqual implements AssertionErrorFactory {
      * differently.
      */
     protected String smartErrorMessage(Description description, Representation representation) {
-//        if (actualAndExpectedHaveSameStringRepresentation()) {
-//            return
-//        }
+        if (actualAndExpectedHaveSameStringRepresentation()) {
+            // This happens for example when actual = 42f and expected = 42d, which will give this error:
+            // actual : "42" and expected : "42".
+            // JUnit 4 manages this case even worst, it will output something like :
+            // "java.lang.String expected:java.lang.String<42.0> but was: java.lang.String<42.0>"
+            // which makes things even more confusing since we lost the fact that 42 was a float or a double.
+            // It is therefore better to built our own description without using ComparisonFailure, the
+            // only drawback is that it won't look nice in IDEs.
+            return defaultDetailedErrorMessage(description, representation);
+        }
         return null;
 
     }
 
     protected boolean actualAndExpectedHaveSameStringRepresentation() {
         return Objects.equals(representation.toStringOf(actual), representation.toStringOf(expected));
+    }
+
+    // TODO(jack.comdback) : first
+    protected String defaultDetailedErrorMessage(Description description, Representation representation) {
+        return null;
     }
 }
