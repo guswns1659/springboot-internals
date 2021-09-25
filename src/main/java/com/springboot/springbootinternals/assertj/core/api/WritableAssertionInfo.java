@@ -1,7 +1,9 @@
 package com.springboot.springbootinternals.assertj.core.api;
 
 import static com.springboot.springbootinternals.assertj.core.configuration.ConfigurationProvider.CONFIGURATION_PROVIDER;
+import static com.springboot.springbootinternals.assertj.core.util.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
+
 import com.springboot.springbootinternals.assertj.core.description.Description;
 import com.springboot.springbootinternals.assertj.core.presentation.Representation;
 import java.util.function.Supplier;
@@ -28,7 +30,8 @@ public class WritableAssertionInfo implements AssertionInfo {
 
     @Override
     public String overridingErrorMessage() {
-        return overridingErrorMessageSupplier != null ? overridingErrorMessageSupplier.get() : overridingErrorMessage;
+        return overridingErrorMessageSupplier != null ? overridingErrorMessageSupplier.get()
+            : overridingErrorMessage;
     }
 
     @Override
@@ -39,5 +42,14 @@ public class WritableAssertionInfo implements AssertionInfo {
     @Override
     public Representation representation() {
         return representation;
+    }
+
+    /**
+     * Sets the lay fail message that will replace the default message of an assertion failure by using a supplier.
+     */
+    public void overridingErrorMessage(Supplier<String> supplier) {
+        checkState(overridingErrorMessage == null,
+            "An error message has already been set with overridingErrorMessage(String newErrorMessage)");
+        overridingErrorMessageSupplier = supplier;
     }
 }
