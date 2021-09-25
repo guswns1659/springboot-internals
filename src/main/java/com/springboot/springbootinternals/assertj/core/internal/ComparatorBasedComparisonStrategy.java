@@ -11,4 +11,9 @@ public class ComparatorBasedComparisonStrategy extends AbstractComparisonStrateg
     public boolean areEqual(Object actual, Object expected) {
         return false;
     }
+
+    @Override
+    public boolean isStandard() {
+        return false;
+    }
 }

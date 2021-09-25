@@ -1,19 +1,31 @@
 package com.springboot.springbootinternals.assertj.core.error;
 
+import static com.springboot.springbootinternals.assertj.core.util.Arrays.array;
+
 import com.springboot.springbootinternals.assertj.core.description.Description;
 import com.springboot.springbootinternals.assertj.core.internal.ComparatorBasedComparisonStrategy;
 import com.springboot.springbootinternals.assertj.core.internal.ComparisonStrategy;
+import com.springboot.springbootinternals.assertj.core.internal.Failures;
 import com.springboot.springbootinternals.assertj.core.presentation.Representation;
+import com.springboot.springbootinternals.assertj.core.util.VisibleForTesting;
 import java.util.Objects;
 
 public class ShouldBeEqual implements AssertionErrorFactory {
 
     private static final String EXPECTED_BUT_WAS_MESSAGE = "%nexpected: %s%nbut was : %s";
-    public static final String EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR = EXPECTED_BUT_WAS_MESSAGE + "%n%s";
+    private static final String EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR = EXPECTED_BUT_WAS_MESSAGE + "%n%s";
+    private static final Class<?>[] MSG_ARG_TYPES = array(String.class, String.class, String.class);
+    private static final Class<?>[] MSG_ARG_TYPES_FOR_ASSERTION_FAILED_ERROR = array(String.class, Object.class,
+        Object.class);
+
     protected final Object actual;
     protected final Object expected;
     protected final MessageFormatter messageFormatter = MessageFormatter.instance();
     protected final ComparisonStrategy comparisonStrategy;
+    @VisibleForTesting
+    ConstructorInvoker constructorInvoker = new ConstructorInvoker();
+    @VisibleForTesting
+    DescriptionFormatter descriptionFormatter = DescriptionFormatter.instance();
     private Representation representation;
 
     protected ShouldBeEqual(Object actual, Object expected, ComparisonStrategy comparisonStrategy,
@@ -42,8 +54,71 @@ public class ShouldBeEqual implements AssertionErrorFactory {
     @Override
     public AssertionError newAssertionError(Description description, Representation representation) {
         String message = smartErrorMessage(description, representation);
+        // only use JUnit error message if the comparison strategy used was standard, otherwise we need to mention
+        // comparison strategy in the assertion error message to make it clear to the user it was used.
+        if (comparisonStrategy.isStandard() && !actualAndExpectedHaveSameStringRepresentation()) {
+            // comparison strategy is standard -> try to build an AssertionFailedError used in JUnit 5 that is nicely displayed in IDEs
+            AssertionError assertionFailedError = assertionFailedError(message, representation);
+            // assertionFailedError != null means that JUnit 5 and opentest4j are in the classpath
+            if (assertionFailedError != null) {
+                return assertionFailedError;
+            }
+            // Junit5 was not used, try to build a JUnit 4 ComparisonFailure that is nicely displayed in IDEs
+            AssertionError error = comparisonFailure(description);
+            // error != null means that JUnit 4 was in the classpath and we build a ComparisonFailure.
+            if (error != null) {
+                return error;
+            }
+        }
+        AssertionError assertionFailedError = assertionFailedError(message, representation);
+        // assertionFailedError != null means that JUnit 5 and opentest4j was in the classpath
+        if (assertionFailedError != null) {
+            return assertionFailedError;
+        }
+        // No JUnit in the classpath => fall back to default error message
+        return Failures.instance().failure(message);
+    }
 
+    private AssertionError comparisonFailure(Description description) {
+        try {
+            AssertionError comparisonFailure = newComparisonFailure(
+                descriptionFormatter.format(description).trim());
+            Failures.instance().removeAssertJRelatedElementsFromStackTraceIfNeeded(comparisonFailure);
+            return comparisonFailure;
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
+    private AssertionError newComparisonFailure(String description) throws Exception {
+        Object o = constructorInvoker.newInstance("org.junit.ComparisonFailure",
+            MSG_ARG_TYPES,
+            description,
+            representation.toStringOf(expected),
+            representation.toStringOf(actual));
+        if (o instanceof AssertionError) {
+            return (AssertionError) o;
+        }
         return null;
+    }
+
+    private AssertionError assertionFailedError(String message, Representation representation) {
+        try {
+            Object o = constructorInvoker.newInstance("org.opentest4j.AssertionFailedError",
+                MSG_ARG_TYPES_FOR_ASSERTION_FAILED_ERROR,
+                message,
+                representation.toStringOf(expected),
+                representation.toStringOf(actual));
+
+            if (o instanceof AssertionError) {
+                AssertionError assertionError = (AssertionError) o;
+                Failures.instance().removeAssertJRelatedElementsFromStackTraceIfNeeded(assertionError);
+                return assertionError;
+            }
+            return null;
+        } catch (Throwable e) {
+            return null;
+        }
     }
 
     /**
@@ -62,8 +137,10 @@ public class ShouldBeEqual implements AssertionErrorFactory {
             // only drawback is that it won't look nice in IDEs.
             return defaultDetailedErrorMessage(description, representation);
         }
-        return null;
-
+        return comparisonStrategy.isStandard()
+            ? messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE, expected, actual)
+            : messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR,
+                expected, actual, comparisonStrategy);
     }
 
     protected boolean actualAndExpectedHaveSameStringRepresentation() {
@@ -82,7 +159,8 @@ public class ShouldBeEqual implements AssertionErrorFactory {
             return messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE_USING_COMPARATOR,
                 detailedExpected(), detailedActual(), comparisonStrategy);
         }
-        return messageFormatter.format(description, representation, EXPECTED_BUT_WAS_MESSAGE, detailedExpected(), detailedActual());
+        return messageFormatter
+            .format(description, representation, EXPECTED_BUT_WAS_MESSAGE, detailedExpected(), detailedActual());
     }
 
     protected String detailedExpected() {

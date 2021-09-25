@@ -6,7 +6,7 @@ import com.springboot.springbootinternals.assertj.core.util.VisibleForTesting;
 
 public class DescriptionFormatter {
 
-    public static final DescriptionFormatter INSTANCE = new DescriptionFormatter();
+    private static final DescriptionFormatter INSTANCE = new DescriptionFormatter();
 
     public static DescriptionFormatter instance() {
         return INSTANCE;

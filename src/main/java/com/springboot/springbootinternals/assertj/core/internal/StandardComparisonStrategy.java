@@ -20,4 +20,9 @@ public class StandardComparisonStrategy extends AbstractComparisonStrategy{
     public boolean areEqual(Object actual, Object expected) {
         return java.util.Objects.deepEquals(actual, expected);
     }
+
+    @Override
+    public boolean isStandard() {
+        return true;
+    }
 }

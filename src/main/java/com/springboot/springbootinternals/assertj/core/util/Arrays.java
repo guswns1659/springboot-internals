@@ -13,6 +13,8 @@ public class Arrays {
         return array.length == 0;
     }
 
-
-
+    @SafeVarargs
+    public static <T> T[] array(T... values) {
+        return values;
+    }
 }
