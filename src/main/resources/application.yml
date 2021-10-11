@@ -8,12 +8,21 @@ spring:
         password: "jack"
         topics:
           jack-topic: "jack"
+#  jpa:
+#    hibernate:
+#      ddl-auto: none # Remove comments if you want to use schema.sql and data.sql
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:testdb
 
 logging:
   level:
     org:
       hibernate:
         SQL: DEBUG
+
 ---
 spring:
   config:
