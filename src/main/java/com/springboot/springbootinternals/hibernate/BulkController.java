@@ -1,10 +1,14 @@
 package com.springboot.springbootinternals.hibernate;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +27,12 @@ public class BulkController {
 
     @GetMapping("")
     public String save() {
-        Document document = new Document("name");
+        List<String> names = Arrays.asList("name", "name2");
+        System.out.println(">>>>>" + this.getClass());
 
-        documentRepository.save(document);
+        List<Document> documents = names.stream().map(Document::new).collect(Collectors.toList());
+
+        documentRepository.saveAll(documents);
 
         return "success";
     }
@@ -34,6 +41,7 @@ public class BulkController {
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Setter
 class Document {
 
     @Id
