@@ -48,19 +48,19 @@
     </encoder>
   </appender>
 
-  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>logs2/mylog.txt</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- rollover daily -->
-      <fileNamePattern>logs2/mylog-%d{yyyy-MM-dd-HH-mm}.%i.txt</fileNamePattern>
-      <maxFileSize>10KB</maxFileSize>
-      <maxHistory>5</maxHistory>
-      <totalSizeCap>100KB</totalSizeCap>
-    </rollingPolicy>
-    <encoder>
-      <pattern>%msg%n</pattern>
-    </encoder>
-  </appender>
+<!--  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--    <file>logs2/mylog.txt</file>-->
+<!--    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--      &lt;!&ndash; rollover daily &ndash;&gt;-->
+<!--      <fileNamePattern>logs2/mylog-%d{yyyy-MM-dd-HH-mm}.%i.txt</fileNamePattern>-->
+<!--      <maxFileSize>10KB</maxFileSize>-->
+<!--      <maxHistory>5</maxHistory>-->
+<!--      <totalSizeCap>100KB</totalSizeCap>-->
+<!--    </rollingPolicy>-->
+<!--    <encoder>-->
+<!--      <pattern>%msg%n</pattern>-->
+<!--    </encoder>-->
+<!--  </appender>-->
 
 <!--  ConsoleAppender이 없으면 콘솔에 메세지 쓰는 객체가 없어서 안나온다.-->
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -69,24 +69,28 @@
     </encoder>
   </appender>
 
-  <logger name="timeBased" level="INFO">
-    <appender-ref ref="TIME_BASED_FILE"/>
-    <appender-ref ref="STDOUT"/>
-  </logger>
-
-  <logger name="fixWindowBased" level="INFO">
-    <appender-ref ref="FIX_WINDOW_BASED_FILE"/>
-    <appender-ref ref="STDOUT"/>
-  </logger>
-
-  <logger name="sizeAndTimeBased" level="DEBUG">
-    <appender-ref ref="SIZE_AND_TIME_BASED_FILE"/>
+<!--  <logger name="timeBased" level="INFO">-->
+<!--    <appender-ref ref="TIME_BASED_FILE"/>-->
 <!--    <appender-ref ref="STDOUT"/>-->
-  </logger>
+<!--  </logger>-->
 
-  <logger name="ROLLING" level="DEBUG">
-    <appender-ref ref="ROLLING"/>
+<!--  <logger name="fixWindowBased" level="INFO">-->
+<!--    <appender-ref ref="FIX_WINDOW_BASED_FILE"/>-->
 <!--    <appender-ref ref="STDOUT"/>-->
-  </logger>
+<!--  </logger>-->
+
+<!--  <logger name="sizeAndTimeBased" level="DEBUG">-->
+<!--    <appender-ref ref="SIZE_AND_TIME_BASED_FILE"/>-->
+<!--    <appender-ref ref="STDOUT"/>-->
+<!--  </logger>-->
+
+<!--  <logger name="ROLLING" level="DEBUG">-->
+<!--    <appender-ref ref="ROLLING"/>-->
+<!--    <appender-ref ref="STDOUT"/>-->
+<!--  </logger>-->
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+  </root>
 
 </configuration>
