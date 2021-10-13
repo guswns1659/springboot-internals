@@ -1,5 +1,9 @@
 ---
 spring:
+  profiles:
+    include:
+      - jack-prod
+      - jack-dev
   kafka:
     jack:
       bootstrap-servers: "localhost:52632"
