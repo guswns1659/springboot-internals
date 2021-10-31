@@ -19,7 +19,10 @@ spring:
     console:
       enabled: true
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;MODE=DB2;
+  batch:
+    job:
+      enabled: false
 
 logging:
   level:
