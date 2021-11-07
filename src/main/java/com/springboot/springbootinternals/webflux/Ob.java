@@ -6,9 +6,13 @@ public class Ob {
 
     /**
      * 리액티브란? 발생한 이벤트에 대해서 대응하는 방식을 의미한다.
-     * duality.
+     * duality. : 기능이 동일한데 반대 방향으로 표현하는 것.
      * observer pattern.
      * Reactive Stream : 자바를 사용하는 회사들이 만든 리액티브 표준을 의미한다. java9 API에 들어감.
+     * <p>
+     * duality
+     * Iterable <--> Observable
+     * Pull <--> Push
      */
     public static void main(String[] args) {
         Iterable<Integer> iterable = () ->
@@ -29,6 +33,10 @@ public class Ob {
 
         for (Integer i : iterable) {
             System.out.println(i);
+        }
+
+        for (Iterator<Integer> it = iterable.iterator(); it.hasNext(); ) {
+            System.out.println(it.next());
         }
     }
 }
