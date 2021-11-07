@@ -1,7 +1,9 @@
 package com.springboot.springbootinternals.webflux;
 
 import java.util.Iterator;
+import java.util.Observable;
 
+@SuppressWarnings("deprecation")
 public class Ob {
 
     /**
@@ -37,6 +39,22 @@ public class Ob {
 
         for (Iterator<Integer> it = iterable.iterator(); it.hasNext(); ) {
             System.out.println(it.next());
+        }
+
+        // Observable
+        // Soruce(Observable) -> Event -> Observer
+
+
+    }
+
+    static class IntObservable extends Observable implements Runnable {
+
+        @Override
+        public void run() {
+            for (int i = 1; i <= 10; i++) {
+                setChanged();
+                notifyObservers(i); // Using update method for notifying observers. observer has only a method, update.
+            }
         }
     }
 }
