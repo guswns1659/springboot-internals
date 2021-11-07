@@ -38,13 +38,16 @@ public class Ob {
             System.out.println(i);
         }
 
-        for (Iterator<Integer> it = iterable.iterator(); it.hasNext(); ) {
-            System.out.println(it.next());
-        }
+        System.out.println("-----------------");
 
         // Observable
         // Soruce(Observable) -> Event -> Observer
         Observer ob = (Observable o, Object arg) -> System.out.println(arg);
+
+        IntObservable io = new IntObservable();
+        io.addObserver(ob);
+
+        io.run();
     }
 
     static class IntObservable extends Observable implements Runnable {
