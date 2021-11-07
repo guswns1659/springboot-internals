@@ -2,6 +2,7 @@ package com.springboot.springbootinternals.webflux;
 
 import java.util.Iterator;
 import java.util.Observable;
+import java.util.Observer;
 
 @SuppressWarnings("deprecation")
 public class Ob {
@@ -43,8 +44,7 @@ public class Ob {
 
         // Observable
         // Soruce(Observable) -> Event -> Observer
-
-
+        Observer ob = (Observable o, Object arg) -> System.out.println(arg);
     }
 
     static class IntObservable extends Observable implements Runnable {
