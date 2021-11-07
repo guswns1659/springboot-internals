@@ -1,2 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
 logging:
-  config: classpath:log4j2.xml
+  config: classpath:log4j2-dev.xml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: sandbox
+
+logging:
+  config: classpath:log4j2-sb.xml
