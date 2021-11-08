@@ -42,15 +42,18 @@ public class PubSub {
         };
 
         Subscriber<Integer> s = new Subscriber<>() {
+            Subscription subscription;
             @Override
             public void onSubscribe(Subscription subscription) {
                 System.out.println("onSubscription");
+                this.subscription = subscription;
                 subscription.request(1);
             }
 
             @Override
             public void onNext(Integer item) {
                 System.out.println("onNext " + item);
+                this.subscription.request(1);
             }
 
             // try - catch don't need.
