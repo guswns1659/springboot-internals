@@ -1,6 +1,7 @@
 package com.springboot.springbootinternals.webflux;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import static java.util.concurrent.Flow.*;
 
@@ -17,10 +18,18 @@ public class PubSub {
         Publisher<Integer> p = new Publisher() {
             @Override
             public void subscribe(Subscriber subscriber) {
+                Iterator<Integer> it = itr.iterator();
                 subscriber.onSubscribe(new Subscription() {
                     @Override
                     public void request(long n) {
-
+                        while (true) {
+                            if (it.hasNext()) {
+                                subscriber.onNext(it.next());
+                            } else {
+                                subscriber.onComplete();
+                                break;
+                            }
+                        }
                     }
 
                     @Override
@@ -36,11 +45,12 @@ public class PubSub {
             @Override
             public void onSubscribe(Subscription subscription) {
                 System.out.println("onSubscription");
+                subscription.request(Long.MAX_VALUE);
             }
 
             @Override
             public void onNext(Integer item) {
-                System.out.println("onNext " +item);
+                System.out.println("onNext " + item);
             }
 
             // try - catch don't need.
@@ -55,6 +65,5 @@ public class PubSub {
             }
         };
         p.subscribe(s);
-
     }
 }
