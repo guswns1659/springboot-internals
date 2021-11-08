@@ -3,6 +3,8 @@ package com.springboot.springbootinternals.webflux;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @SuppressWarnings("deprecation")
 public class Ob {
@@ -41,13 +43,17 @@ public class Ob {
         System.out.println("-----------------");
 
         // Observable
-        // Soruce(Observable) -> Event -> Observer
-        Observer ob = (Observable o, Object arg) -> System.out.println(arg);
+        // Source(Observable) -> Event -> Observer
+        Observer ob = (Observable o, Object arg) -> System.out.println(Thread.currentThread().getName() + " " +arg);
 
         IntObservable io = new IntObservable();
         io.addObserver(ob);
 
-        io.run();
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        es.execute(io);
+
+        System.out.println(Thread.currentThread().getName() + " EXIT");
+        es.shutdown();
     }
 
     static class IntObservable extends Observable implements Runnable {
