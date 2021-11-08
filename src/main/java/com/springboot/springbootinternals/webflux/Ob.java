@@ -2,7 +2,6 @@ package com.springboot.springbootinternals.webflux;
 
 import java.util.Iterator;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,42 +19,47 @@ public class Ob {
      * Pull <--> Push
      */
     public static void main(String[] args) {
-        Iterable<Integer> iterable = () ->
-                new Iterator<>() {
-                    final static int MAX = 10;
-                    int i = 0;
 
-                    @Override
-                    public boolean hasNext() {
-                        return i < MAX;
-                    }
-
-                    @Override
-                    public Integer next() {
-                        return ++i;
-                    }
-                };
-
-        for (Integer i : iterable) {
-            System.out.println(i);
+        IntIterable iterable = new IntIterable();
+        for(int num : iterable) {
+            System.out.println(num);
         }
 
-        System.out.println("-----------------");
+        System.out.println("------------------");
 
-        // Observable
-        // Source(Observable) -> Event -> Observer
-        Observer ob = (Observable o, Object arg) -> System.out.println(Thread.currentThread().getName() + " " +arg);
+        IntObservable observable = new IntObservable();
+        observable.addObserver((o, arg) -> System.out.println(Thread.currentThread().getName() + " " +arg));
 
-        IntObservable io = new IntObservable();
-        io.addObserver(ob);
-
-        ExecutorService es = Executors.newSingleThreadExecutor();
-        es.execute(io);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(observable);
 
         System.out.println(Thread.currentThread().getName() + " EXIT");
-        es.shutdown();
+        executorService.shutdown();
     }
 
+    static class IntIterable implements Iterable<Integer> {
+
+        @Override
+        public Iterator<Integer> iterator() {
+            return new Iterator<>() {
+                int i = 0;
+                static final int MAX = 10;
+
+                @Override
+                public boolean hasNext() {
+                    return i < MAX;
+                }
+
+                @Override
+                public Integer next() {
+                    return ++i;
+                }
+            };
+        }
+    }
+
+    // Observable
+    // Source(Observable) -> Event -> Observer
     static class IntObservable extends Observable implements Runnable {
 
         @Override
