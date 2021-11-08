@@ -1,7 +1,13 @@
 package com.springboot.springbootinternals.webflux;
 
-import java.util.Arrays;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+import java.util.Observable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+@SuppressWarnings("deprecation")
 public class Ob {
 
     /** 리액티브란?
@@ -11,9 +17,52 @@ public class Ob {
      *  Reactive Stream : 자바를 사용하는 회사들이 만든 리액티브 표준을 의미한다. java9 API에 들어감.
      */
     public static void main(String[] args) {
-        Iterable<Integer> iterable = Arrays.asList(1, 2, 3, 4, 5);
-        for (Integer i : iterable) {
-            System.out.println(i);
+
+        IntIterable iterable = new IntIterable();
+        for(int num : iterable) {
+            System.out.println(num);
+        }
+
+        System.out.println("------------------");
+
+        IntObservable observable = new IntObservable();
+        observable.addObserver((o, arg) -> System.out.println(arg));
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(observable);
+        executorService.shutdown();
+    }
+
+    static class IntObservable extends Observable implements Runnable {
+
+        @Override
+        public void run() {
+            for (int i = 1; i<=10; i++) {
+                setChanged();
+                notifyObservers(i);
+            }
+        }
+    }
+
+    static class IntIterable implements Iterable<Integer> {
+
+        @NotNull
+        @Override
+        public Iterator<Integer> iterator() {
+            return new Iterator<>() {
+                int i = 0;
+                static final int MAX = 10;
+
+                @Override
+                public boolean hasNext() {
+                    return i < MAX;
+                }
+
+                @Override
+                public Integer next() {
+                    return ++i;
+                }
+            };
         }
     }
 }
