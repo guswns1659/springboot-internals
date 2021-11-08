@@ -22,7 +22,7 @@ public class PubSub {
                 subscriber.onSubscribe(new Subscription() {
                     @Override
                     public void request(long n) {
-                        while (true) {
+                        while (n-- > 0) {
                             if (it.hasNext()) {
                                 subscriber.onNext(it.next());
                             } else {
@@ -45,7 +45,7 @@ public class PubSub {
             @Override
             public void onSubscribe(Subscription subscription) {
                 System.out.println("onSubscription");
-                subscription.request(Long.MAX_VALUE);
+                subscription.request(1);
             }
 
             @Override
