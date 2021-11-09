@@ -1,5 +1,6 @@
 package com.springboot.springbootinternals.rabbitmq;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,10 +37,11 @@ public class PublisherTest {
     }
 
     @Test
-    void publish_success() {
-        jackPublisher.publishMessages("item");
-//        rabbitListenerEndpointRegistry.getListenerContainer(
-//                "jackListener"
-//        ).start();
+    void publish_listen_success() throws JsonProcessingException {
+        Data item = Data.builder().name("item").build();
+        jackPublisher.publishMessages(item);
+        rabbitListenerEndpointRegistry.getListenerContainer(
+                "jackListener"
+        ).start();
     }
 }
