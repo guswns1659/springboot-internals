@@ -19,14 +19,13 @@ allprojects {
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("com.h2database:h2:1.4.200")
         implementation("org.springframework.boot:spring-boot-starter-batch:2.5.1")
-        implementation("org.springframework.amqp:spring-rabbit:1.6.2.RELEASE")
+        implementation("org.springframework.amqp:spring-rabbit")
         // lombok
         implementation("org.projectlombok:lombok")
         annotationProcessor("org.projectlombok:lombok")
         testImplementation("org.springframework.kafka:spring-kafka-test")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
-
     tasks {
         "test"(Test::class) {
             useJUnitPlatform()
