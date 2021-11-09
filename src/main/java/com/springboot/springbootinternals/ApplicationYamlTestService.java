@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicationYamlTestService {
 
-    @Value("${jack.name}")
+    @Value("${jack.name:name}")
     private String name;
 
     public String ymlOverrideTest() {
