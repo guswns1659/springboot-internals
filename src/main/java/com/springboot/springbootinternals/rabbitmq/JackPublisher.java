@@ -15,7 +15,7 @@ public class JackPublisher {
 
     public void publishMessages(String item) {
         rabbitTemplate.convertAndSend(
-                "item",
+                "items",
                 item
         );
     }
