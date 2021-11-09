@@ -37,9 +37,8 @@ class JackListener {
     @RabbitListener(
             id = "jackListener",
             queues = "items")
-    public String receiveMessage(@Payload Message message) {
-        System.out.println(message);
-        return message.toString();
+    public void receiveMessage(@Payload Message message) {
+        System.out.println(">>>>> " + message);
     }
 }
 
