@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,6 +47,11 @@ public class RabbitConfiguration {
     @Primary
     public RabbitTemplate oldRabbitTemplate(@Qualifier("oldRabbitConnectionFactory") ConnectionFactory connectionFactory) {
         return new RabbitTemplate(connectionFactory);
+    }
+
+    @Bean("oldRabbitAdmin")
+    public RabbitAdmin oldRabbitAdmin(@Qualifier("oldRabbitConnectionFactory") ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
     }
 
     // TODO(jack.comeback) : newConnectionFactory, newRabbitTemplate 추가
