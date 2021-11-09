@@ -23,9 +23,11 @@ public class JackPublisher {
 
 @Component
 @RequiredArgsConstructor
-class Listener {
+class JackListener {
 
-    @RabbitListener(queues = "items")
+    @RabbitListener(
+            id = "jackListener",
+            queues = "items")
     public String receiveMessage(@Payload Message message) {
         System.out.println(message);
         return message.toString();
