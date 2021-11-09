@@ -12,3 +12,12 @@ spring:
         password: "jack"
         topics:
           jack-topic: "jack123"
+  rabbitmq:
+    host: localhost
+    port: 5671
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      direct:
+        auto-startup: false # for testing
