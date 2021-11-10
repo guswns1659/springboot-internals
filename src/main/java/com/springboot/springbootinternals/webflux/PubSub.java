@@ -12,6 +12,8 @@ public class PubSub {
         /**
          * 1. pub.subscribe(sub)
          * 2. sub.onSubscribe(Subscription)
+         * 3. Subscription.request(n)
+         * 4. sub.onNext()
          */
         Iterable<Integer> itr = Arrays.asList(1, 2, 3, 4, 5);
 
@@ -20,15 +22,18 @@ public class PubSub {
             public void subscribe(Subscriber subscriber) {
                 Iterator<Integer> it = itr.iterator();
                 subscriber.onSubscribe(new Subscription() {
-                    @Override
                     public void request(long n) {
-                        while (n-- > 0) {
-                            if (it.hasNext()) {
-                                subscriber.onNext(it.next());
-                            } else {
-                                subscriber.onComplete();
-                                break;
+                        try {
+                            while (n-- > 0) {
+                                if (it.hasNext()) {
+                                    subscriber.onNext(it.next());
+                                } else {
+                                    subscriber.onComplete();
+                                    break;
+                                }
                             }
+                        } catch (RuntimeException e) {
+                            subscriber.onError(e);
                         }
                     }
 
@@ -43,6 +48,7 @@ public class PubSub {
 
         Subscriber<Integer> s = new Subscriber<>() {
             Subscription subscription;
+
             @Override
             public void onSubscribe(Subscription subscription) {
                 System.out.println("onSubscription");
@@ -59,7 +65,7 @@ public class PubSub {
             // try - catch don't need.
             @Override
             public void onError(Throwable throwable) {
-                System.out.println("onError");
+                System.out.println("onError " + throwable.getMessage());
             }
 
             @Override
