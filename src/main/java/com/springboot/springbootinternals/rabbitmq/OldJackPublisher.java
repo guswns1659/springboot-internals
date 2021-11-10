@@ -14,11 +14,15 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
-public class JackPublisher {
+public class OldJackPublisher {
 
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
+
+    public OldJackPublisher(RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.objectMapper = objectMapper;
+    }
 
     public void publishMessages(Data item) throws JsonProcessingException {
         String message = objectMapper.writeValueAsString(item);
@@ -32,13 +36,13 @@ public class JackPublisher {
 
 @Component
 @RequiredArgsConstructor
-class JackListener {
+class OldJackListener {
 
     @RabbitListener(
             id = "jackListener",
             queues = "items")
     public void receiveMessage(@Payload Message message) {
-        System.out.println(">>>>> " + message);
+        System.out.println(">>>>> old message " + message);
     }
 }
 
