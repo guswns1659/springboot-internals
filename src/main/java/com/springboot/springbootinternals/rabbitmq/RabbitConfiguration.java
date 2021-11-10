@@ -19,14 +19,8 @@ import org.springframework.context.annotation.Primary;
 @RequiredArgsConstructor
 public class RabbitConfiguration {
 
-//    @Bean
-//    public Jackson2JsonMessageConverter jackson2JsonMessageConverter(
-//            ObjectMapper objectMapper
-//    ) {
-//        return new Jackson2JsonMessageConverter(objectMapper);
-//    }
-
-    @Bean
+    @Bean("oldListenerContainerFactory")
+    @Primary
     public SimpleRabbitListenerContainerFactory listenerContainerFactory(
             SimpleRabbitListenerContainerFactoryConfigurer configurer,
             @Qualifier("oldRabbitConnectionFactory") ConnectionFactory connectionFactory
@@ -66,6 +60,42 @@ public class RabbitConfiguration {
         return new RabbitAdmin(connectionFactory);
     }
 
-    // TODO(jack.comeback) : newConnectionFactory, newRabbitTemplate 추가
+
+    @Bean("newRabbitTemplate")
+    public RabbitTemplate newRabbitTemplate(@Qualifier("newRabbitConnectionFactory") ConnectionFactory connectionFactory) {
+        return new RabbitTemplate(connectionFactory);
+    }
+
+    @Bean("newRabbitAdmin")
+    public RabbitAdmin newRabbitAdmin(@Qualifier("newRabbitConnectionFactory") ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
+
+    @Bean("newListenerContainerFactory")
+    public SimpleRabbitListenerContainerFactory newListenerContainerFactory(
+            SimpleRabbitListenerContainerFactoryConfigurer configurer,
+            @Qualifier("newRabbitConnectionFactory") ConnectionFactory connectionFactory
+    ) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        configurer.configure(factory, connectionFactory);
+        return factory;
+    }
+    @Bean("newRabbitConnectionFactory")
+    public ConnectionFactory newRabbitConnectionFactory(
+            @Value("${new.rabbitmq.host:localhost}") String host,
+            @Value("${spring.rabbitmq.port.new:5672}") int port,
+            @Value("${spring.rabbitmq.username.new:guest}") String username,
+            @Value("${spring.rabbitmq.password.new:guest}") String password,
+            @Value("${spring.rabbitmq.virtual-host.new:/}") String virtualHost
+    ) {
+        CachingConnectionFactory factory = new CachingConnectionFactory();
+        factory.setHost(host);
+        factory.setPort(port);
+        factory.setUsername(username);
+        factory.setPassword(password);
+        factory.setVirtualHost(virtualHost);
+
+        return factory;
+    }
 
 }
