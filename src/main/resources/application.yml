@@ -49,7 +49,7 @@ spring:
           jack-topic: "jack"
   rabbitmq:
     host: localhost
-    port: 5671
+    port: 5673
     username: guest
     password: guest
     virtual-host: /
