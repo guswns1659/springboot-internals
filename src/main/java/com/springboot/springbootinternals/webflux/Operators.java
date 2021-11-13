@@ -18,9 +18,31 @@ public class Operators {
     public static void main(String[] args) {
         // publisher that publish 1 to 10 sequentially.
         Flow.Publisher<Integer> pub = iterPub(Stream.iterate(1, a -> a + 1).limit(10).collect(Collectors.toList()));
-        Flow.Publisher<Integer> mapPub = mapPub(pub, a -> a * 10);
-        Flow.Publisher<Integer> map2Pub = mapPub(mapPub, a -> -a);
-        map2Pub.subscribe(logSub());
+//        Flow.Publisher<Integer> mapPub = mapPub(pub, a -> a * 10);
+        Flow.Publisher<Integer> sumPub = sumPub(pub);
+        sumPub.subscribe(logSub());
+    }
+
+    private static Flow.Publisher<Integer> sumPub(Flow.Publisher<Integer> pub) {
+        return new Flow.Publisher<Integer>() {
+            @Override
+            public void subscribe(Flow.Subscriber<? super Integer> subscriber) {
+                pub.subscribe(new DelegateSub(subscriber) {
+                    int sum = 0;
+                    @Override
+                    public void onNext(Integer item) {
+                        sum += item;
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        subscriber.onNext(sum);
+                        subscriber.onComplete();
+                    }
+                });
+
+            }
+        };
     }
 
     private static Flow.Publisher<Integer> mapPub(Flow.Publisher<Integer> pub, Function<Integer, Integer> f) {
