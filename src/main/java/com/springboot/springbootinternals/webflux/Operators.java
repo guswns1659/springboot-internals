@@ -3,22 +3,33 @@ package com.springboot.springbootinternals.webflux;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Flow;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Operators
  *
- * pub -> data -> sub
+ * pub -> [data1] -> mapPub -> [data2] -> logSub
+ * 1. map (d1 -> f -> d2)
  */
 @Slf4j
 public class Operators {
     public static void main(String[] args) {
         // publisher that publish 1 to 10 sequentially.
         Flow.Publisher<Integer> pub = iterPub(Stream.iterate(1, a -> a + 1).limit(10).collect(Collectors.toList()));
-        pub.subscribe(logSub());
+        Flow.Publisher<Integer> mapPub = mapPub(pub, a -> a * 10);
+        mapPub.subscribe(logSub());
     }
 
+    private static Flow.Publisher<Integer> mapPub(Flow.Publisher<Integer> pub, Function<Integer, Integer> f) {
+        return new Flow.Publisher<Integer>() {
+            @Override
+            public void subscribe(Flow.Subscriber<? super Integer> subscriber) {
+                pub.subscribe(subscriber);
+            }
+        };
+    }
 
     private static Flow.Subscriber<Integer> logSub() {
         return new Flow.Subscriber<Integer>() {
