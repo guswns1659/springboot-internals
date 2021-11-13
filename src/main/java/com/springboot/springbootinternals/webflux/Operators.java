@@ -6,8 +6,13 @@ import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Operators
+ *
+ * pub -> data -> sub
+ */
 @Slf4j
-public class PubSub2 {
+public class Operators {
     public static void main(String[] args) {
         // publisher that publish 1 to 10 sequentially.
         Flow.Publisher<Integer> pub = iterPub(Stream.iterate(1, a -> a + 1).limit(10).collect(Collectors.toList()));
