@@ -15,6 +15,7 @@ allprojects {
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.springframework.boot:spring-boot-starter-webflux")
         implementation("org.springframework.kafka:spring-kafka")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("com.h2database:h2:1.4.200")
