@@ -19,7 +19,8 @@ public class Operators {
         // publisher that publish 1 to 10 sequentially.
         Flow.Publisher<Integer> pub = iterPub(Stream.iterate(1, a -> a + 1).limit(10).collect(Collectors.toList()));
         Flow.Publisher<Integer> mapPub = mapPub(pub, a -> a * 10);
-        mapPub.subscribe(logSub());
+        Flow.Publisher<Integer> map2Pub = mapPub(mapPub, a -> -a);
+        map2Pub.subscribe(logSub());
     }
 
     private static Flow.Publisher<Integer> mapPub(Flow.Publisher<Integer> pub, Function<Integer, Integer> f) {
