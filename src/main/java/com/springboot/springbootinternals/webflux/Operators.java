@@ -27,26 +27,10 @@ public class Operators {
         return new Flow.Publisher<Integer>() {
             @Override
             public void subscribe(Flow.Subscriber<? super Integer> subscriber) {
-                pub.subscribe(new Flow.Subscriber<Integer>() {
-                    @Override
-                    public void onSubscribe(Flow.Subscription subscription) {
-                        // only delegate
-                        subscriber.onSubscribe(subscription);
-                    }
-
+                pub.subscribe(new DelegateSub(subscriber) {
                     @Override
                     public void onNext(Integer item) {
                         subscriber.onNext(f.apply(item));
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        subscriber.onError(throwable);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        subscriber.onComplete();
                     }
                 });
             }
