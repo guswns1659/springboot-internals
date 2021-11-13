@@ -3,13 +3,14 @@ package com.springboot.springbootinternals.webflux;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Flow;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Operators
- *
+ * <p>
  * pub -> [data1] -> mapPub -> [data2] -> logSub
  * 1. map (d1 -> f -> d2)
  */
@@ -19,24 +20,26 @@ public class Operators {
         // publisher that publish 1 to 10 sequentially.
         Flow.Publisher<Integer> pub = iterPub(Stream.iterate(1, a -> a + 1).limit(10).collect(Collectors.toList()));
 //        Flow.Publisher<Integer> mapPub = mapPub(pub, a -> a * 10);
-        Flow.Publisher<Integer> sumPub = sumPub(pub);
-        sumPub.subscribe(logSub());
+        Flow.Publisher<Integer> reducePub = reducePub(pub, 0, (BiFunction<Integer, Integer, Integer>) (a, b) -> a + b);
+        reducePub.subscribe(logSub());
     }
 
-    private static Flow.Publisher<Integer> sumPub(Flow.Publisher<Integer> pub) {
+    private static Flow.Publisher<Integer> reducePub(Flow.Publisher<Integer> pub, int init, BiFunction<Integer, Integer, Integer> bif) {
         return new Flow.Publisher<Integer>() {
             @Override
             public void subscribe(Flow.Subscriber<? super Integer> subscriber) {
+
                 pub.subscribe(new DelegateSub(subscriber) {
-                    int sum = 0;
+                    int result = init;
+
                     @Override
                     public void onNext(Integer item) {
-                        sum += item;
+                        result = bif.apply(result, item);
                     }
 
                     @Override
                     public void onComplete() {
-                        subscriber.onNext(sum);
+                        subscriber.onNext(result);
                         subscriber.onComplete();
                     }
                 });
