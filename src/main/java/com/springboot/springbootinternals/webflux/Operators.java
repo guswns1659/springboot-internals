@@ -23,6 +23,9 @@ public class Operators {
         mapPub.subscribe(logSub());
     }
 
+    /** https://www.youtube.com/watch?v=DChIxy9g19o&list=PLv-xDnFD-nnmof-yoZQN8Fs2kVljIuFyC&index=9
+     *  Operators 뒷부분이 Generic으로 변환하는 과정인데 하다가 어려워서 우선 주석처리하고 넘어감
+     */
 //    private static Flow.Publisher<Integer> reducePub(Flow.Publisher<Integer> pub, int init, BiFunction<Integer, Integer, Integer> bif) {
 //        return new Flow.Publisher<Integer>() {
 //            @Override
