@@ -8,6 +8,10 @@ import org.reactivestreams.Subscription;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * subscribeOn : 보통 블락킹 DB 호출 등 publish가 늦어지는 경우에 사용. publish쪽을 다른 쓰레드로 하게끔
+ * publishOn : 보통 컨슈머가 느린 경우에 사용. 컨슈머를 다른 쓰레드로 한다.
+ */
 @Slf4j
 public class SchedulerEx {
     public static void main(String[] args) {
