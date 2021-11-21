@@ -9,8 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * subscribeOn : 보통 블락킹 DB 호출 등 publish가 늦어지는 경우에 사용. publish쪽을 다른 쓰레드로 하게끔
- * publishOn : 보통 컨슈머가 느린 경우에 사용. 컨슈머를 다른 쓰레드로 한다.
+ * subscribeOn : 보통 블락킹 DB 호출 등 publish가 늦어지는 경우에 사용. publish할 데이터가 느리게 생성되니까 생성할 때부터 다른 쓰레드로 넘긴다.
+ * publishOn : 보통 컨슈머가 느린 경우에 사용. 컨슈머를 다른 쓰레드로 한다. publish할 데이터는 먼저 빠르게 생성되고 onNext할 때 다른 쓰레드로 넘긴다.
+ * 쓰레드 생성 기준이 subscribeOn은 데이터 생성할 때부터 다른 쓰레드, publishOn은 데이터 전달할 때부터 다른 쓰레드.
+ * 내가 이해한 거는 subscribeOn이 먼저 다른 쓰레드를 쓴다.
  */
 @Slf4j
 public class SchedulerEx {
