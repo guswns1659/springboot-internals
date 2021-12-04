@@ -6,6 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 import java.util.concurrent.*;
 
+/** 비동기 작업의 결과를 넘기는 방법 2가지
+ *  - Future
+ *  - Callback
+ */
 @Slf4j
 public class FutureEx {
     interface SuccessCallback {
