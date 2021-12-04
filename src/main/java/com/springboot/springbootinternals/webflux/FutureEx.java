@@ -1,6 +1,5 @@
 package com.springboot.springbootinternals.webflux;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,18 +12,29 @@ public class FutureEx {
         void onSuccess(String result);
     }
 
+    interface ExceptionCallback {
+        void onError(Throwable t);
+    }
+
     public static class CallbackFutureTask extends FutureTask<String> {
         SuccessCallback sc;
+        ExceptionCallback ec;
 
-        public CallbackFutureTask(@NotNull Callable<String> callable, SuccessCallback sc) {
+        public CallbackFutureTask(@NotNull Callable<String> callable, SuccessCallback sc, ExceptionCallback ec) {
             super(callable);
             this.sc = Objects.requireNonNull(sc);
+            this.ec = Objects.requireNonNull(ec);
         }
 
-        @SneakyThrows
         @Override
         protected void done() {
-            sc.onSuccess(get());
+            try {
+                sc.onSuccess(get());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
+                ec.onError(e.getCause());
+            }
         }
     }
 
@@ -34,9 +44,11 @@ public class FutureEx {
 
         CallbackFutureTask cft = new CallbackFutureTask(() -> {
             Thread.sleep(2000);
+            if (1==1) throw new RuntimeException("Async Error!!");
             log.info("Async");
             return "hello";
-        }, System.out::println);
+        },      r -> System.out.println(r),
+                t -> System.out.println("Error: " + t.getMessage()));
 
         es.execute(cft);
         es.shutdown();
