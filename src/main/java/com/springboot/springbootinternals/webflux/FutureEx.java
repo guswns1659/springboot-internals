@@ -28,8 +28,24 @@ public class FutureEx {
 
         System.out.println(f.isDone());
         log.info("Exit");
-        Thread.sleep(2000);
+        Thread.sleep(2100);
         System.out.println(f.isDone());
         log.info(f.get());
+
+        System.out.println("----------------------------");
+
+        FutureTask<String> ft = new FutureTask<String>(() -> {
+            Thread.sleep(2000);
+            log.info("Async");
+            return "hello";
+        });
+
+        es.execute(ft);
+
+        System.out.println(ft.isDone());
+        log.info("Exit");
+        Thread.sleep(2100);
+        System.out.println(ft.isDone());
+        log.info(ft.get());
     }
 }
