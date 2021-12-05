@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
@@ -16,8 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.Future;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -34,7 +32,7 @@ public class SpringbootInternalsApplication {
     public static class MyService {
         // AOP 기반으로 @Async 비동기 작업을 수행한다.
         @Async
-        public Future<String> hello() throws InterruptedException {
+        public ListenableFuture<String> hello() throws InterruptedException {
             log.info("##### hello()");
             Thread.sleep(2000);
             return new AsyncResult<>("Hello");
@@ -43,8 +41,7 @@ public class SpringbootInternalsApplication {
     }
 
     public static void main(String[] args) {
-        try(ConfigurableApplicationContext c = SpringApplication.run(SpringbootInternalsApplication.class, args)) {
-        }
+        SpringApplication.run(SpringbootInternalsApplication.class, args);
     }
 
     @Autowired
@@ -54,9 +51,9 @@ public class SpringbootInternalsApplication {
     ApplicationRunner run() {
         return args -> {
             log.info("##### run()");
-            Future<String> f = myService.hello();
-            log.info("##### exit " + f.isDone());
-            log.info("result: " + f.get());
+            ListenableFuture<String> f = myService.hello();
+            f.addCallback(s -> System.out.println(s), e -> System.out.println(e.getMessage()));
+            log.info("##### exit");
         };
     }
 
