@@ -37,6 +37,9 @@ public class SpringbootInternalsApplication {
     public static class MyController {
         Queue<DeferredResult<String>> results = new ConcurrentLinkedQueue<>();
 
+        /**
+         * DeferredResult를 이용하면 worker 쓰레드를 만들지 않고 비동기 작업을 처리할 수 있다.
+         */
         @GetMapping("/dr")
         public DeferredResult<String> callable() throws InterruptedException {
             log.info("dr");
