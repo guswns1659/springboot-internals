@@ -12,8 +12,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.Callable;
-
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
 /**
@@ -34,13 +32,19 @@ public class SpringbootInternalsApplication {
     @RestController
     public static class MyController {
         @GetMapping("/callable")
-        public Callable<String> callable() throws InterruptedException {
-            log.info("callable");
-            return () -> {
-                log.info("async");
-                Thread.sleep(2000);
-                return "hello";
-            };
+//        public Callable<String> callable() throws InterruptedException {
+//            log.info("callable");
+//            return () -> {
+//                log.info("async");
+//                Thread.sleep(2000);
+//                return "hello";
+//            };
+//        }
+
+        public String callable() throws InterruptedException {
+            log.info("async");
+            Thread.sleep(2000);
+            return "Hello";
         }
     }
 
