@@ -40,7 +40,7 @@ logging:
 server:
   tomcat:
     threads:
-      max: 20
+      max: 200
 
 
 ---
