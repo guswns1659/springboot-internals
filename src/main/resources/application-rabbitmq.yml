@@ -1,0 +1,18 @@
+spring:
+  kafka:
+    jack:
+      bootstrap-servers: "localhost:52632"
+      authentication:
+        username: "jack"
+        password: "jack"
+        topics:
+          jack-topic: "jack"
+  rabbitmq:
+    host: localhost
+    port: 5673
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      direct:
+        auto-startup: false # for testing

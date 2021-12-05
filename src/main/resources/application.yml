@@ -3,6 +3,7 @@ spring:
     include:
       - jack-prod
       - jack-dev
+      - rabbitmq
   kafka:
     jack:
       bootstrap-servers: "localhost:52632"
