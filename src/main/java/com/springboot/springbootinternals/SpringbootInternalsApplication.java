@@ -11,8 +11,10 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
-import java.util.concurrent.Callable;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -33,14 +35,31 @@ public class SpringbootInternalsApplication {
 
     @RestController
     public static class MyController {
-        @GetMapping("/callable")
-        public Callable<String> callable() throws InterruptedException {
-            log.info("callable");
-            return () -> {
-                log.info("async");
-                Thread.sleep(2000);
-                return "hello";
-            };
+        Queue<DeferredResult<String>> results = new ConcurrentLinkedQueue<>();
+
+        /**
+         * DeferredResult를 이용하면 worker 쓰레드를 만들지 않고 비동기 작업을 처리할 수 있다.
+         */
+        @GetMapping("/dr")
+        public DeferredResult<String> callable() throws InterruptedException {
+            log.info("dr");
+            DeferredResult<String> dr = new DeferredResult<>();
+            results.add(dr);
+            return dr;
+        }
+
+        @GetMapping("/dr/count")
+        public String drCount() {
+            return String.valueOf(results.size());
+        }
+
+        @GetMapping("/dr/event")
+        public String drevent(String msg) {
+            for (DeferredResult<String> dr : results) {
+                dr.setResult("Hello " + msg);
+                results.remove(dr);
+            }
+            return "OK";
         }
     }
 
