@@ -9,11 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
-
-import java.util.concurrent.Executors;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -31,27 +26,6 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
 @Slf4j
 @EnableAsync
 public class SpringbootInternalsApplication {
-
-    @RestController
-    public static class MyController {
-        @GetMapping("/emitter")
-        public ResponseBodyEmitter emitter() throws InterruptedException {
-            ResponseBodyEmitter emitter = new ResponseBodyEmitter();
-
-            Executors.newSingleThreadExecutor().submit(() -> {
-                for (int i = 1; i <= 50; i++) {
-                    try {
-                        emitter.send("<p>Stream " + i + "</p>");
-                        Thread.sleep(100);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            return emitter;
-        }
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(SpringbootInternalsApplication.class, args);
