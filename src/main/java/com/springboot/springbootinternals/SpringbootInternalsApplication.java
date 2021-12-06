@@ -11,10 +11,9 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -35,32 +34,22 @@ public class SpringbootInternalsApplication {
 
     @RestController
     public static class MyController {
-        Queue<DeferredResult<String>> results = new ConcurrentLinkedQueue<>();
+        @GetMapping("/emitter")
+        public ResponseBodyEmitter emitter() throws InterruptedException {
+            ResponseBodyEmitter emitter = new ResponseBodyEmitter();
 
-        /**
-         * DeferredResult를 이용하면 worker 쓰레드를 만들지 않고 비동기 작업을 처리할 수 있다.
-         */
-        @GetMapping("/dr")
-        public DeferredResult<String> callable() throws InterruptedException {
-            log.info("dr");
-            DeferredResult<String> dr = new DeferredResult<>();
-            results.add(dr);
-            return dr;
-        }
+            Executors.newSingleThreadExecutor().submit(() -> {
+                for (int i = 1; i <= 50; i++) {
+                    try {
+                        emitter.send("<p>Stream " + i + "</p>");
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
-        @GetMapping("/dr/count")
-        public String drCount() {
-            return String.valueOf(results.size());
-        }
-
-        @GetMapping("/dr/event")
-        public String drevent(String msg) {
-            for (DeferredResult<String> dr : results) {
-                dr.setResult("Hello " + msg);
-                results.remove(dr);
-            }
-
-            return "OK";
+            return emitter;
         }
     }
 
