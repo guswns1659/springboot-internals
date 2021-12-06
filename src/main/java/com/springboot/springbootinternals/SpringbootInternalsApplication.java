@@ -59,6 +59,7 @@ public class SpringbootInternalsApplication {
                 dr.setResult("Hello " + msg);
                 results.remove(dr);
             }
+
             return "OK";
         }
     }
