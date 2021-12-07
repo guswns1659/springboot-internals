@@ -8,11 +8,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.AsyncRestTemplate;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -33,7 +35,7 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
 @EnableAsync
 public class SpringbootInternalsApplication {
 
-    RestTemplate rt = new RestTemplate();
+    AsyncRestTemplate rt = new AsyncRestTemplate();
 
     /** config 셋팅.
      * server:
@@ -43,10 +45,10 @@ public class SpringbootInternalsApplication {
      */
     @RestController
     public class MyController {
+        // success callback을 스프링에서 자동으로 등록해주기 때문에 사용자가 직접 등록하지 않는다.
         @GetMapping("/rest")
-        public String rest(@RequestParam("idx") int idx) {
-            String res = rt.getForObject("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
-            return res;
+        public ListenableFuture<ResponseEntity<String>> rest(@RequestParam("idx") int idx) {
+            return rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
         }
     }
 
