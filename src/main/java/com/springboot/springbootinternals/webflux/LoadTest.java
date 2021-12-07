@@ -15,7 +15,7 @@ public class LoadTest {
         ExecutorService es = Executors.newFixedThreadPool(100);
 
         RestTemplate rt = new RestTemplate();
-        String url = "http://localhost:8080/rest";
+        String url = "http://localhost:8080/rest?idx={idx}";
 
         // await()을 만나면 대기를 걸고 parties 개수가되면 동시에 쓰레드가 날아간다.
         CyclicBarrier barrier = new CyclicBarrier(101);
@@ -31,10 +31,10 @@ public class LoadTest {
                 StopWatch sw = new StopWatch();
                 sw.start();
 
-                rt.getForObject(url, String.class);
+                String res = rt.getForObject(url, String.class, idx);
 
                 sw.stop();
-                log.info("Thread : {} | Elapsed: {}", idx, sw.getTotalTimeSeconds());
+                log.info("Thread : {} | Elapsed: {} | res : {}", idx, sw.getTotalTimeSeconds(), res);
                 return null;
             });
         }

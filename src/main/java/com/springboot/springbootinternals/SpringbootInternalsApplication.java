@@ -10,7 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -21,19 +23,30 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
  *   다시 일 할때는 running으로 하기 때문에
  */
 @ComponentScan(
-                excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE,
-                classes = {JackProducer.class, JackProducerConfig.class}))
+                excludeFilters = {
+                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {JackProducer.class, JackProducerConfig.class}),
+                @Filter(type = FilterType.REGEX, pattern ={"com.springboot.springbootinternals.rabbitmq.*"})}
+)
 @SpringBootApplication
 @EnableBatchProcessing
 @Slf4j
 @EnableAsync
 public class SpringbootInternalsApplication {
 
+    RestTemplate rt = new RestTemplate();
+
+    /** config 셋팅.
+     * server:
+     *   tomcat:
+     *     threads:
+     *       max: 1
+     */
     @RestController
-    public static class MyController {
+    public class MyController {
         @GetMapping("/rest")
-        public String rest() {
-            return "hello";
+        public String rest(@RequestParam("idx") int idx) {
+            String res = rt.getForObject("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
+            return res;
         }
     }
 

@@ -1,6 +1,5 @@
 package com.springboot.springbootinternals.webflux;
 
-import com.springboot.springbootinternals.SpringbootInternalsApplication;
 import com.springboot.springbootinternals.kafka.JackProducer;
 import com.springboot.springbootinternals.kafka.JackProducerConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @ComponentScan(
@@ -26,7 +26,8 @@ public class RemoteService {
     @RestController
     public static class MyController {
         @GetMapping("/service")
-        public String rest(String req) {
+        public String rest(@RequestParam("req") String req) throws InterruptedException {
+            Thread.sleep(2000);
             return req + "/service" ;
         }
     }
@@ -35,6 +36,6 @@ public class RemoteService {
         // Set system properties for two tomcat.
         System.setProperty("SERVER.PORT","8081");
         System.setProperty("server.tomcat.max-threads", "1000");
-        SpringApplication.run(SpringbootInternalsApplication.class, args);
+        SpringApplication.run(RemoteService.class, args);
     }
 }
