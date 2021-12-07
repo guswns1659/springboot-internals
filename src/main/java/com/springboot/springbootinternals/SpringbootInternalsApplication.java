@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -26,6 +28,14 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
 @Slf4j
 @EnableAsync
 public class SpringbootInternalsApplication {
+
+    @RestController
+    public static class MyController {
+        @GetMapping("/rest")
+        public String rest() {
+            return "hello";
+        }
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(SpringbootInternalsApplication.class, args);
