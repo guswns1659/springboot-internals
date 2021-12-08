@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.AsyncRestTemplate;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -54,8 +55,19 @@ public class SpringbootInternalsApplication {
     public class MyController {
         // success callback을 스프링에서 자동으로 등록해주기 때문에 사용자가 직접 등록하지 않는다.
         @GetMapping("/rest")
-        public ListenableFuture<ResponseEntity<String>> rest(@RequestParam("idx") int idx) {
-            return rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
+        public DeferredResult<String> rest(@RequestParam("idx") int idx) {
+            DeferredResult<String> dr = new DeferredResult<>();
+
+            ListenableFuture<ResponseEntity<String>> f1 =
+                    rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
+            f1.addCallback(s->{
+                dr.setResult(s.getBody() + "/work");
+            }, e-> {
+                // 비동기 방식에서는 에러를 던져도 어느 스택트레이스에 타고 있는지 파악이 어렵다.
+                dr.setErrorResult(e.getMessage());
+            });
+
+            return dr;
         }
     }
 
