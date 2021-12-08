@@ -63,16 +63,17 @@ public class SpringbootInternalsApplication {
         @Autowired
         MyService myService;
 
+        static final String URL1 = "http://localhost:8081/service?req={req}";
+        static final String URL2 = "http://localhost:8081/service?req={req}";
+
         // success callback을 스프링에서 자동으로 등록해주기 때문에 사용자가 직접 등록하지 않는다.
         @GetMapping("/rest")
         public DeferredResult<String> rest(@RequestParam("idx") int idx) {
             DeferredResult<String> dr = new DeferredResult<>();
 
-            ListenableFuture<ResponseEntity<String>> f1 =
-                    rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
+            ListenableFuture<ResponseEntity<String>> f1 = rt.getForEntity(URL1, String.class, "hello " + idx);
             f1.addCallback(s->{
-                ListenableFuture<ResponseEntity<String>> f2 =
-                        rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + s.getBody());
+                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, "hello " + s.getBody());
                 f2.addCallback(s2->{
                     ListenableFuture<String> f3 = myService.work(s2.getBody());
                     f3.addCallback(s3-> {
@@ -87,7 +88,6 @@ public class SpringbootInternalsApplication {
                 // 비동기 방식에서는 에러를 던져도 어느 스택트레이스에 타고 있는지 파악이 어렵다.
                 dr.setErrorResult(e.getMessage());
             });
-
             return dr;
         }
     }
