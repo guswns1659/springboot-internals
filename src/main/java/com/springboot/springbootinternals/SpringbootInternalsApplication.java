@@ -2,6 +2,7 @@ package com.springboot.springbootinternals;
 
 import com.springboot.springbootinternals.kafka.JackProducer;
 import com.springboot.springbootinternals.kafka.JackProducerConfig;
+import io.netty.channel.nio.NioEventLoopGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +37,12 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
 @EnableAsync
 public class SpringbootInternalsApplication {
 
-    AsyncRestTemplate rt = new AsyncRestTemplate();
+    /**
+     * AsyncRestTemplate만으로는 쓰레드 하나만 사용되진 않는다. 뒤에서 worker 쓰레드가 만들어진다.
+     * Netty를 추가하면 쓰레드가 1개만 만들어진다.
+     */
+    AsyncRestTemplate rt = new AsyncRestTemplate(
+            new Netty4ClientHttpRequestFactory(new NioEventLoopGroup(1)));
 
     /** config 셋팅.
      * server:
