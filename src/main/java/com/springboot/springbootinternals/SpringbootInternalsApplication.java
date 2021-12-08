@@ -8,7 +8,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.AsyncRestTemplate;
 
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -19,13 +25,32 @@ import static org.springframework.context.annotation.ComponentScan.Filter;
  *   다시 일 할때는 running으로 하기 때문에
  */
 @ComponentScan(
-                excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE,
-                classes = {JackProducer.class, JackProducerConfig.class}))
+                excludeFilters = {
+                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {JackProducer.class, JackProducerConfig.class}),
+                @Filter(type = FilterType.REGEX, pattern ={"com.springboot.springbootinternals.rabbitmq.*"})}
+)
 @SpringBootApplication
 @EnableBatchProcessing
 @Slf4j
 @EnableAsync
 public class SpringbootInternalsApplication {
+
+    AsyncRestTemplate rt = new AsyncRestTemplate();
+
+    /** config 셋팅.
+     * server:
+     *   tomcat:
+     *     threads:
+     *       max: 1
+     */
+    @RestController
+    public class MyController {
+        // success callback을 스프링에서 자동으로 등록해주기 때문에 사용자가 직접 등록하지 않는다.
+        @GetMapping("/rest")
+        public ListenableFuture<ResponseEntity<String>> rest(@RequestParam("idx") int idx) {
+            return rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
+        }
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(SpringbootInternalsApplication.class, args);
