@@ -61,7 +61,13 @@ public class SpringbootInternalsApplication {
             ListenableFuture<ResponseEntity<String>> f1 =
                     rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + idx);
             f1.addCallback(s->{
-                dr.setResult(s.getBody() + "/work");
+                ListenableFuture<ResponseEntity<String>> f2 =
+                        rt.getForEntity("http://localhost:8081/service?req={req}", String.class, "hello " + s.getBody());
+                f2.addCallback(s2->{
+                    dr.setResult(s2.getBody());
+                }, e->{
+                    dr.setErrorResult(e.getMessage());
+                });
             }, e-> {
                 // 비동기 방식에서는 에러를 던져도 어느 스택트레이스에 타고 있는지 파악이 어렵다.
                 dr.setErrorResult(e.getMessage());
