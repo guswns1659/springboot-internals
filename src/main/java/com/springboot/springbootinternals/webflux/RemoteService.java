@@ -30,6 +30,12 @@ public class RemoteService {
             Thread.sleep(2000);
             return req + "/service" ;
         }
+
+        @GetMapping("/service2")
+        public String rest2(@RequestParam("req") String req) throws InterruptedException {
+            Thread.sleep(2000);
+            return req + "/service2" ;
+        }
     }
 
     public static void main(String[] args) {
