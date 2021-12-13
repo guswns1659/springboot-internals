@@ -64,7 +64,7 @@ public class SpringbootInternalsApplication {
         MyService myService;
 
         static final String URL1 = "http://localhost:8081/service?req={req}";
-        static final String URL2 = "http://localhost:8081/service?req={req}";
+        static final String URL2 = "http://localhost:8081/service2?req={req}";
 
         // success callback을 스프링에서 자동으로 등록해주기 때문에 사용자가 직접 등록하지 않는다.
         @GetMapping("/rest")
