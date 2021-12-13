@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.function.Consumer;
+
 import static org.springframework.context.annotation.ComponentScan.Filter;
 
 /**
@@ -71,24 +73,68 @@ public class SpringbootInternalsApplication {
         public DeferredResult<String> rest(@RequestParam("idx") int idx) {
             DeferredResult<String> dr = new DeferredResult<>();
 
-            ListenableFuture<ResponseEntity<String>> f1 = rt.getForEntity(URL1, String.class, "hello " + idx);
-            f1.addCallback(s->{
-                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, "hello " + s.getBody());
-                f2.addCallback(s2->{
-                    ListenableFuture<String> f3 = myService.work(s2.getBody());
-                    f3.addCallback(s3-> {
-                        dr.setResult(s3);
-                    }, e->{
-                        dr.setErrorResult(e.getMessage());
-                    });
-                }, e->{
-                    dr.setErrorResult(e.getMessage());
-                });
-            }, e-> {
-                // 비동기 방식에서는 에러를 던져도 어느 스택트레이스에 타고 있는지 파악이 어렵다.
-                dr.setErrorResult(e.getMessage());
-            });
+            Completion
+                    .from(rt.getForEntity(URL1, String.class, "hello " + idx))
+                    .andAccept(s-> dr.setResult(s.getBody()));
+//            ListenableFuture<ResponseEntity<String>> f1 = rt.getForEntity(URL1, String.class, "hello " + idx);
+//            f1.addCallback(s->{
+//                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, "hello " + s.getBody());
+//                f2.addCallback(s2->{
+//                    ListenableFuture<String> f3 = myService.work(s2.getBody());
+//                    f3.addCallback(s3-> {
+//                        dr.setResult(s3);
+//                    }, e->{
+//                        dr.setErrorResult(e.getMessage());
+//                    });
+//                }, e->{
+//                    dr.setErrorResult(e.getMessage());
+//                });
+//            }, e-> {
+//                // 비동기 방식에서는 에러를 던져도 어느 스택트레이스에 타고 있는지 파악이 어렵다.
+//                dr.setErrorResult(e.getMessage());
+//            });
             return dr;
+        }
+    }
+
+    public static class Completion {
+        Completion next;
+
+        Consumer<ResponseEntity<String>> con;
+
+        public Completion(Consumer<ResponseEntity<String>> con) {
+            this.con = con;
+        }
+
+        public Completion() {
+        }
+
+        public void andAccept(Consumer<ResponseEntity<String>> con) {
+            Completion c = new Completion(con);
+            this.next = c;
+        }
+
+        public static Completion from(ListenableFuture<ResponseEntity<String>> lf) {
+            Completion c = new Completion();
+            lf.addCallback(s-> {
+                c.complete(s);
+            }, e-> {
+                c.error(e);
+            });
+            return c;
+        }
+
+        void error(Throwable e) {
+
+        }
+
+        void complete(ResponseEntity<String> s) {
+            if (next != null) next.run(s);
+        }
+
+        void run(ResponseEntity<String> value) {
+            if (con != null) con.accept(value);
+
         }
     }
 
