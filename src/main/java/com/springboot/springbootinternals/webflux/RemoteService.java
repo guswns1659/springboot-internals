@@ -28,12 +28,14 @@ public class RemoteService {
         @GetMapping("/service")
         public String rest(@RequestParam("req") String req) throws InterruptedException {
             Thread.sleep(2000);
+            log.info("request service1");
             return req + "/service" ;
         }
 
         @GetMapping("/service2")
         public String rest2(@RequestParam("req") String req) throws InterruptedException {
             Thread.sleep(2000);
+            log.info("request service2");
             return req + "/service2" ;
         }
     }
