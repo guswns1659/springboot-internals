@@ -2,10 +2,12 @@ package com.springboot.springbootinternals.webflux;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Flow;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -20,8 +22,63 @@ public class Ob {
      * Reactive Stream : 자바를 사용하는 회사들이 만든 리액티브 표준을 의미한다. java9 API에 들어감.
      */
     public static void main(String[] args) throws InterruptedException {
+        Iterable<Integer> iterable = Arrays.asList(1, 2, 3, 4, 5);
+
+        // reactive streams
+        final Flow.Publisher<Integer> pub = subscriber -> {
+
+            Iterator<Integer> iter = iterable.iterator();
+
+            subscriber.onSubscribe(new Flow.Subscription() {
+                @Override
+                public void request(long n) {
+                    while (true) {
+                        if (iter.hasNext()) {
+                            subscriber.onNext(iter.next());
+                        } else {
+                            subscriber.onComplete();
+                            break;
+                        }
+                    }
+                }
+
+                @Override
+                public void cancel() {
+
+                }
+            });
+        };
+
+        final Flow.Subscriber<Integer> sub = new Flow.Subscriber<>() {
+
+            @Override
+            public void onSubscribe(Flow.Subscription subscription) {
+                log.info("onSubscribe");
+                subscription.request(Long.MAX_VALUE);
+            }
+
+            @Override
+            public void onNext(Integer item) {
+                log.info("onNext : {}", item);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                log.info("onError");
+            }
+
+            @Override
+            public void onComplete() {
+                log.info("onComplete");
+            }
+        };
+
+        pub.subscribe(sub);
+
+
+        log.info("####################-foreach");
         // pull - iterator
-        Iterable<Integer> iterable = () ->
+        Iterable<Integer> iterable2 = () ->
                 new Iterator<>() {
                     static final int MAX = 10;
                     int i = 0;
