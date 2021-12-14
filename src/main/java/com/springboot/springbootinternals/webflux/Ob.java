@@ -6,10 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Flow;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Slf4j
 public class Ob {
@@ -29,17 +26,23 @@ public class Ob {
 
             Iterator<Integer> iter = iterable.iterator();
 
+            final ExecutorService es = Executors.newSingleThreadExecutor();
+
             subscriber.onSubscribe(new Flow.Subscription() {
                 @Override
                 public void request(long n) {
-                    while (true) {
-                        if (iter.hasNext()) {
-                            subscriber.onNext(iter.next());
-                        } else {
-                            subscriber.onComplete();
-                            break;
+                    es.execute(() -> {
+                        int i = 0;
+                        while (i++ < n) {
+                            if (iter.hasNext()) {
+                                subscriber.onNext(iter.next());
+                            } else {
+                                subscriber.onComplete();
+                                break;
+                            }
                         }
-                    }
+                    });
+
                 }
 
                 @Override
@@ -50,16 +53,19 @@ public class Ob {
         };
 
         final Flow.Subscriber<Integer> sub = new Flow.Subscriber<>() {
+            Flow.Subscription subscription;
 
             @Override
             public void onSubscribe(Flow.Subscription subscription) {
                 log.info("onSubscribe");
-                subscription.request(Long.MAX_VALUE);
+                this.subscription = subscription;
+                subscription.request(1);
             }
 
             @Override
             public void onNext(Integer item) {
                 log.info("onNext : {}", item);
+                subscription.request(1);
             }
 
             @Override
