@@ -76,7 +76,9 @@ public class SpringbootInternalsApplication {
             Completion
                     .from(rt.getForEntity(URL1, String.class, "hello " + idx))
                     .andApply(s-> rt.getForEntity(URL2, String.class, s.getBody()))
+                    .andError(e -> dr.setErrorResult(e.toString()))
                     .andAccept(s-> dr.setResult(s.getBody()));
+            
 //            ListenableFuture<ResponseEntity<String>> f1 = rt.getForEntity(URL1, String.class, "hello " + idx);
 //            f1.addCallback(s->{
 //                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, "hello " + s.getBody());
@@ -123,12 +125,36 @@ public class SpringbootInternalsApplication {
         }
     }
 
+
+    public static class ErrorCompletion extends Completion {
+        Consumer<Throwable> econ;
+        public ErrorCompletion(Consumer<Throwable> econ) {
+            this.econ = econ;
+        }
+
+        @Override
+        void run(ResponseEntity<String> value) {
+            if (next != null) next.run(value);
+        }
+
+        @Override
+        void error(Throwable e) {
+            econ.accept(e);
+        }
+    }
+
     public static class Completion {
         Completion next;
 
         public void andAccept(Consumer<ResponseEntity<String>> con) {
             Completion c = new AcceptCompletion(con);
             this.next = c;
+        }
+
+        public Completion andError(Consumer<Throwable> econ) {
+            Completion c = new ErrorCompletion(econ);
+            this.next = c;
+            return c;
         }
 
         public Completion andApply(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
@@ -148,6 +174,7 @@ public class SpringbootInternalsApplication {
         }
 
         void error(Throwable e) {
+            if (next != null) next.error(e);
 
         }
 
