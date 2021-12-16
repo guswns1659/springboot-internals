@@ -27,14 +27,14 @@ public class RemoteService {
     public static class MyController {
         @GetMapping("/service")
         public String rest(@RequestParam("req") String req) throws InterruptedException {
-            Thread.sleep(2000);
+            Thread.sleep(1000); // sleep을 없애면 NettyEventLoop 이용한 비동기 처리 방식이 정상동작. 다만, 2000초로 지정하면 실패하는 경우가 많음.
             log.info("request service1");
             return req + "/service" ;
         }
 
         @GetMapping("/service2")
         public String rest2(@RequestParam("req") String req) throws InterruptedException {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             log.info("request service2");
             return req + "/service2" ;
         }

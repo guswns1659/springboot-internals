@@ -73,6 +73,9 @@ public class SpringbootInternalsApplication {
         public DeferredResult<String> rest(@RequestParam("idx") int idx) {
             DeferredResult<String> dr = new DeferredResult<>();
 
+            /**
+             * from메서드가 시작하자마자 URL1으로 요청이 간다. 그와 동시에 andApply, andError 등 체이닝을 통해 Completion을 구성한다.
+             */
             Completion
                     .from(rt.getForEntity(URL1, String.class, "hello " + idx))
                     .andApply(s-> rt.getForEntity(URL2, String.class, s.getBody()))
@@ -81,7 +84,7 @@ public class SpringbootInternalsApplication {
             
 //            ListenableFuture<ResponseEntity<String>> f1 = rt.getForEntity(URL1, String.class, "hello " + idx);
 //            f1.addCallback(s->{
-//                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, "hello " + s.getBody());
+//                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, + s.getBody());
 //                f2.addCallback(s2->{
 //                    ListenableFuture<String> f3 = myService.work(s2.getBody());
 //                    f3.addCallback(s3-> {
@@ -100,6 +103,7 @@ public class SpringbootInternalsApplication {
         }
     }
 
+    // Consumer acceptCompletion
     public static class AcceptCompletion extends Completion {
         Consumer<ResponseEntity<String>> con;
         public AcceptCompletion(Consumer<ResponseEntity<String>> con) {
@@ -112,6 +116,7 @@ public class SpringbootInternalsApplication {
         }
     }
 
+    // Function applyCompletion
     public static class ApplyCompletion extends Completion {
         Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn;
         public ApplyCompletion(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
@@ -120,12 +125,12 @@ public class SpringbootInternalsApplication {
 
         @Override
         void run(ResponseEntity<String> value) {
-            final ListenableFuture<ResponseEntity<String>> lf = fn.apply(value);
+            ListenableFuture<ResponseEntity<String>> lf = fn.apply(value);
             lf.addCallback(s->complete(s), e->error(e));
         }
     }
 
-
+    // Error consumer Completion
     public static class ErrorCompletion extends Completion {
         Consumer<Throwable> econ;
         public ErrorCompletion(Consumer<Throwable> econ) {
@@ -143,27 +148,32 @@ public class SpringbootInternalsApplication {
         }
     }
 
+    // Basic Completion
     public static class Completion {
         Completion next;
 
         public void andAccept(Consumer<ResponseEntity<String>> con) {
+            log.info("andAccept start");
             Completion c = new AcceptCompletion(con);
             this.next = c;
         }
 
         public Completion andError(Consumer<Throwable> econ) {
+            log.info("andError start");
             Completion c = new ErrorCompletion(econ);
             this.next = c;
             return c;
         }
 
         public Completion andApply(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
+            log.info("andApply start");
             Completion c = new ApplyCompletion(fn);
             this.next = c;
             return c;
         }
 
         public static Completion from(ListenableFuture<ResponseEntity<String>> lf) {
+            log.info("from start");
             Completion c = new Completion();
             lf.addCallback(s-> {
                 c.complete(s);
@@ -173,17 +183,14 @@ public class SpringbootInternalsApplication {
             return c;
         }
 
-        void error(Throwable e) {
-            if (next != null) next.error(e);
-
-        }
+        void error(Throwable e) { if (next != null) next.error(e); }
 
         void complete(ResponseEntity<String> s) {
+            log.info("complete start");
             if (next != null) next.run(s);
         }
 
-        void run(ResponseEntity<String> value) {
-        }
+        void run(ResponseEntity<String> value) { }
     }
 
     @Service
