@@ -4,25 +4,12 @@ spring:
       - jack-prod
       - jack-dev
       - rabbitmq
+      - kafka
+      - batch
       - h2
-  kafka:
-    jack:
-      bootstrap-servers: "localhost:52632"
-      authentication:
-        username: "jack"
-        password: "jack"
-        topics:
-          jack-topic: "jack"
 #  jpa:
 #    hibernate:
 #      ddl-auto: none # Remove comments if you want to use schema.sql and data.sql
-  batch:
-    job:
-      enabled: false
-  task:
-    execution:
-      pool:
-        core-size: 100 # 토비님 강의 따라하면서 worker 쓰레드를 100로 해야 동일한 결과가 나옴.
 
 logging:
   level:
@@ -33,11 +20,6 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE # show_parameter_value
-server:
-  tomcat:
-    threads:
-      max: 1
-
 
 ---
 spring:

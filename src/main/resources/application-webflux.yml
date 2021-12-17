@@ -1,0 +1,10 @@
+spring:
+  task:
+    execution:
+      pool:
+        core-size: 100 # 토비님 강의 따라하면서 worker 쓰레드를 100로 해야 동일한 결과가 나옴.
+
+server:
+  tomcat:
+    threads:
+      max: 1
