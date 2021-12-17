@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
@@ -73,15 +72,19 @@ public class SpringbootInternalsApplication {
         public DeferredResult<String> rest(@RequestParam("idx") int idx) {
             DeferredResult<String> dr = new DeferredResult<>();
 
+            /**
+             * from메서드가 시작하자마자 URL1으로 요청이 간다. 그와 동시에 andApply, andError 등 체이닝을 통해 Completion을 구성한다.
+             */
             Completion
                     .from(rt.getForEntity(URL1, String.class, "hello " + idx))
                     .andApply(s-> rt.getForEntity(URL2, String.class, s.getBody()))
+                    .andApply(s -> myService.work(s.getBody()))
                     .andError(e -> dr.setErrorResult(e.toString()))
-                    .andAccept(s-> dr.setResult(s.getBody()));
+                    .andAccept(s-> dr.setResult(s));
             
 //            ListenableFuture<ResponseEntity<String>> f1 = rt.getForEntity(URL1, String.class, "hello " + idx);
 //            f1.addCallback(s->{
-//                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, "hello " + s.getBody());
+//                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, + s.getBody());
 //                f2.addCallback(s2->{
 //                    ListenableFuture<String> f3 = myService.work(s2.getBody());
 //                    f3.addCallback(s3-> {
@@ -100,40 +103,43 @@ public class SpringbootInternalsApplication {
         }
     }
 
-    public static class AcceptCompletion extends Completion {
-        Consumer<ResponseEntity<String>> con;
-        public AcceptCompletion(Consumer<ResponseEntity<String>> con) {
+    // Consumer acceptCompletion
+    // value를 받아서 소비하기 때문에 S. 사실 어렵당..
+    public static class AcceptCompletion<S> extends Completion<S, Void> {
+        Consumer<S> con;
+        public AcceptCompletion(Consumer<S> con) {
             this.con = con;
         }
 
         @Override
-        void run(ResponseEntity<String> value) {
+        void run(S value) {
             con.accept(value);
         }
     }
 
-    public static class ApplyCompletion extends Completion {
-        Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn;
-        public ApplyCompletion(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
+    // Function applyCompletion
+    public static class ApplyCompletion<S, T> extends Completion<S, T> {
+        Function<S, ListenableFuture<T>> fn;
+        public ApplyCompletion(Function<S, ListenableFuture<T>> fn) {
             this.fn = fn;
         }
 
         @Override
-        void run(ResponseEntity<String> value) {
-            final ListenableFuture<ResponseEntity<String>> lf = fn.apply(value);
+        void run(S value) {
+            ListenableFuture<T> lf = fn.apply(value);
             lf.addCallback(s->complete(s), e->error(e));
         }
     }
 
-
-    public static class ErrorCompletion extends Completion {
+    // Error consumer Completion
+    public static class ErrorCompletion<T> extends Completion<T,T> {
         Consumer<Throwable> econ;
         public ErrorCompletion(Consumer<Throwable> econ) {
             this.econ = econ;
         }
 
         @Override
-        void run(ResponseEntity<String> value) {
+        void run(T value) {
             if (next != null) next.run(value);
         }
 
@@ -143,28 +149,37 @@ public class SpringbootInternalsApplication {
         }
     }
 
-    public static class Completion {
+    // Basic Completion
+    public static class Completion<S, T> {
         Completion next;
 
-        public void andAccept(Consumer<ResponseEntity<String>> con) {
-            Completion c = new AcceptCompletion(con);
+        public void andAccept(Consumer<T> con) {
+            log.info("andAccept start");
+            Completion<T, Void> c = new AcceptCompletion<T>(con);
             this.next = c;
         }
 
-        public Completion andError(Consumer<Throwable> econ) {
-            Completion c = new ErrorCompletion(econ);
-            this.next = c;
-            return c;
-        }
-
-        public Completion andApply(Function<ResponseEntity<String>, ListenableFuture<ResponseEntity<String>>> fn) {
-            Completion c = new ApplyCompletion(fn);
+        // retureType을 안넘기면 다음에 수행하는 객체가 들어오는 타입을 알 수 없다. 컴파일에러는 Object 타입이라고 알려줌
+        public Completion<T, T> andError(Consumer<Throwable> econ) {
+            log.info("andError start");
+            Completion<T, T> c = new ErrorCompletion<>(econ);
             this.next = c;
             return c;
         }
 
-        public static Completion from(ListenableFuture<ResponseEntity<String>> lf) {
-            Completion c = new Completion();
+        // V의 이유는 어떤 리스너블퓨처가 들어올지 모르니까 새로운 타입을 설정하고, 메세드 레벨에 적어놓는다.
+        public <V> Completion<T, V> andApply(Function<T, ListenableFuture<V>> fn) {
+            log.info("andApply start");
+            Completion<T, V> c = new ApplyCompletion<>(fn);
+            this.next = c;
+            return c;
+        }
+
+        // from은 static 메서드라서 타입파라미터 대신 메서드 파라미터를 사용한다.
+        // return type의 타입을 알려줘야 다음 Completion이 타입을 알 수 있다.
+        public static <S, T> Completion<S, T> from(ListenableFuture<T> lf) {
+            log.info("from start");
+            Completion<S, T> c = new Completion<>();
             lf.addCallback(s-> {
                 c.complete(s);
             }, e-> {
@@ -173,17 +188,16 @@ public class SpringbootInternalsApplication {
             return c;
         }
 
-        void error(Throwable e) {
-            if (next != null) next.error(e);
+        void error(Throwable e) { if (next != null) next.error(e); }
 
-        }
-
-        void complete(ResponseEntity<String> s) {
+        // ListenableFuture가 실행된 결과가 들어오기 때문에 T
+        void complete(T s) {
+            log.info("complete start");
             if (next != null) next.run(s);
         }
 
-        void run(ResponseEntity<String> value) {
-        }
+        // value를 가지고 어떤 로직을 수행하기 때문에 S
+        void run(S value) { }
     }
 
     @Service
