@@ -1,4 +1,4 @@
-package com.springboot.springbootinternals.batch;
+package com.titanic.batch.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

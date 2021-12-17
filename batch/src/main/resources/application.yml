@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    include:
+      - batch
+      - h2
+#  jpa:
+#    hibernate:
+#      ddl-auto: none # Remove comments if you want to use schema.sql and data.sql
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE # show_parameter_value
