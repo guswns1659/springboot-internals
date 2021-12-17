@@ -4,6 +4,7 @@ spring:
       - jack-prod
       - jack-dev
       - rabbitmq
+      - h2
   kafka:
     jack:
       bootstrap-servers: "localhost:52632"
@@ -15,11 +16,6 @@ spring:
 #  jpa:
 #    hibernate:
 #      ddl-auto: none # Remove comments if you want to use schema.sql and data.sql
-  h2:
-    console:
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=DB2;
   batch:
     job:
       enabled: false
