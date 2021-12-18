@@ -1,4 +1,4 @@
-package com.springboot.springbootinternals;
+package com.titanic.webmvc.ymloveride;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

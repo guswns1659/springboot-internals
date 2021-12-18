@@ -1,4 +1,4 @@
-package com.springboot.springbootinternals.webflux;
+package com.titanic.webflux;
 
 import reactor.core.publisher.Flux;
 

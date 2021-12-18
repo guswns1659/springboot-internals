@@ -1,4 +1,4 @@
-package com.springboot.springbootinternals.webflux;
+package com.titanic.webflux;
 
 import java.util.Iterator;
 import java.util.Observable;

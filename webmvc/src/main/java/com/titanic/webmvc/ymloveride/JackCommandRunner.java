@@ -1,4 +1,4 @@
-package com.springboot.springbootinternals;
+package com.titanic.webmvc.ymloveride;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

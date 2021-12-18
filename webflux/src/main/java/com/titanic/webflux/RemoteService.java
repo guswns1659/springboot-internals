@@ -1,25 +1,14 @@
-package com.springboot.springbootinternals.webflux;
+package com.titanic.webflux;
 
-import com.springboot.springbootinternals.kafka.JackProducer;
-import com.springboot.springbootinternals.kafka.JackProducerConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@ComponentScan(
-        excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {JackProducer.class, JackProducerConfig.class}),
-                @ComponentScan.Filter(type = FilterType.REGEX, pattern ={"com.springboot.springbootinternals.rabbitmq.*"})}
-)
 @SpringBootApplication
-@EnableBatchProcessing
 @Slf4j
 @EnableAsync
 public class RemoteService {

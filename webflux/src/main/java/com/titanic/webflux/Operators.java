@@ -1,4 +1,4 @@
-package com.springboot.springbootinternals.webflux;
+package com.titanic.webflux;
 
 import lombok.extern.slf4j.Slf4j;
 

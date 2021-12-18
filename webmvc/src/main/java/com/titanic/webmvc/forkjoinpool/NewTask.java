@@ -1,7 +1,6 @@
-package com.springboot.springbootinternals.forkjoinpool;
+package com.titanic.webmvc.forkjoinpool;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.RecursiveAction;
 

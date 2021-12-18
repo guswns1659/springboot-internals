@@ -1,7 +1,6 @@
-package com.springboot.springbootinternals.webflux;
+package com.titanic.webflux;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.*;
@@ -24,7 +23,7 @@ public class FutureEx {
         SuccessCallback sc;
         ExceptionCallback ec;
 
-        public CallbackFutureTask(@NotNull Callable<String> callable, SuccessCallback sc, ExceptionCallback ec) {
+        public CallbackFutureTask(Callable<String> callable, SuccessCallback sc, ExceptionCallback ec) {
             super(callable);
             this.sc = Objects.requireNonNull(sc);
             this.ec = Objects.requireNonNull(ec);
