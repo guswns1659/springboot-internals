@@ -38,14 +38,25 @@ configure(subprojects.filter { it.name == "log4j2" }) {
     }
 }
 
+configure(subprojects.filter { it.name == "messaging" }) {
+
+    dependencies {
+        implementation("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.springframework.kafka:spring-kafka")
+        implementation("org.springframework.amqp:spring-rabbit")
+
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
+    }
+}
+
 configure(subprojects.filter { it.name == "webmvc" }) {
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("com.h2database:h2:1.4.200")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        implementation("org.springframework.kafka:spring-kafka")
-        implementation("org.springframework.amqp:spring-rabbit")
+        // For NioEventLoopGroup
+        implementation("io.netty:netty-all:4.1.68.Final")
 
         testImplementation("org.springframework.kafka:spring-kafka-test")
         testImplementation("org.springframework.boot:spring-boot-starter-test")

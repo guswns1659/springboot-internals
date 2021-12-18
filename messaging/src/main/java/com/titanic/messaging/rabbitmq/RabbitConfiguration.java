@@ -1,7 +1,6 @@
-package com.springboot.springbootinternals.rabbitmq;
+package com.titanic.messaging.rabbitmq;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-@EnableRabbit
 @Configuration
 @RequiredArgsConstructor
 public class RabbitConfiguration {

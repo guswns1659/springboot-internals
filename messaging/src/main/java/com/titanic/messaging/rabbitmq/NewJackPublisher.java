@@ -1,4 +1,4 @@
-package com.springboot.springbootinternals.rabbitmq;
+package com.titanic.messaging.rabbitmq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
