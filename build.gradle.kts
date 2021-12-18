@@ -46,6 +46,7 @@ configure(subprojects.filter { it.name == "messaging" }) {
         implementation("org.springframework.amqp:spring-rabbit")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("org.springframework.kafka:spring-kafka-test")
     }
 }
 
@@ -58,7 +59,6 @@ configure(subprojects.filter { it.name == "webmvc" }) {
         // For NioEventLoopGroup
         implementation("io.netty:netty-all:4.1.68.Final")
 
-        testImplementation("org.springframework.kafka:spring-kafka-test")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 }

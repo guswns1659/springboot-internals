@@ -1,9 +1,0 @@
-spring:
-  kafka:
-    jack:
-      bootstrap-servers: "localhost:52632"
-      authentication:
-        username: "jack"
-        password: "jack"
-        topics:
-          jack-topic: "jack"
