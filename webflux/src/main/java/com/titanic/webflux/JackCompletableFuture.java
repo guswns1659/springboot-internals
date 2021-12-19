@@ -18,12 +18,12 @@ public class JackCompletableFuture {
         CompletableFuture.supplyAsync(() -> {
             log.info("supplyAsync");
             return 1;
-        })
-            .thenApply(n -> {
+        }, es)
+            .thenApplyAsync(n -> {
                 log.info("thenApply = {} ", n);
                 return n + 2;
-            })
-            .thenApply(n -> {
+            }, es)
+            .thenApplyAsync(n -> {
                 log.info("thenApply = {} ", n);
                 try {
                     Thread.sleep(3000);
@@ -31,7 +31,7 @@ public class JackCompletableFuture {
                     e.printStackTrace();
                 }
                 return n * 2;
-            })
+            }, es)
             .thenAccept(System.out::println);
 
         ForkJoinPool.commonPool().awaitQuiescence(50, TimeUnit.SECONDS);
