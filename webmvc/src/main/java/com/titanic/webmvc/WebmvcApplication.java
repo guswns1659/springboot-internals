@@ -7,8 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.Netty4ClientHttpRequestFactory;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -56,7 +54,7 @@ public class WebmvcApplication {
 
             toCF(rt.getForEntity(URL1, String.class, "hello " + idx))
                     .thenCompose(s -> toCF(rt.getForEntity(URL2, String.class,  s.getBody())))
-                    .thenCompose(s2 -> toCF(myService.work(s2.getBody())))
+                    .thenApplyAsync(s2 -> myService.work(s2.getBody()))
                     .thenAccept(s3 -> dr.setResult(s3))
                     // function 타입으로 받아야해서 명시적으로 null을 리턴해야함.
                     .exceptionally(e -> {
@@ -174,9 +172,8 @@ public class WebmvcApplication {
 
     @Service
     public static class MyService {
-        @Async
-        public ListenableFuture<String> work(String req) {
-            return new AsyncResult<>(req + "/asyncwork");
+        public String work(String req) {
+            return req + "/asyncwork";
         }
     }
 
