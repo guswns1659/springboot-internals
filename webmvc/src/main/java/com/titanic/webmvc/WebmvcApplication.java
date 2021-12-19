@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -53,34 +54,24 @@ public class WebmvcApplication {
         public DeferredResult<String> rest(@RequestParam("idx") int idx) {
             DeferredResult<String> dr = new DeferredResult<>();
 
-            /**
-             * from메서드가 시작하자마자 URL1으로 요청이 간다. 그와 동시에 andApply, andError 등 체이닝을 통해 Completion을 구성한다.
-             */
-            Completion
-                    .from(rt.getForEntity(URL1, String.class, "hello " + idx))
-                    .andApply(s-> rt.getForEntity(URL2, String.class, s.getBody()))
-                    .andApply(s -> myService.work(s.getBody()))
-                    .andError(e -> dr.setErrorResult(e.toString()))
-                    .andAccept(s-> dr.setResult(s));
+            toCF(rt.getForEntity(URL1, String.class, "hello " + idx))
+                    .thenCompose(s -> toCF(rt.getForEntity(URL2, String.class,  s.getBody())))
+                    .thenCompose(s2 -> toCF(myService.work(s2.getBody())))
+                    .thenAccept(s3 -> dr.setResult(s3))
+                    // function 타입으로 받아야해서 명시적으로 null을 리턴해야함.
+                    .exceptionally(e -> {
+                        dr.setErrorResult(e.getMessage());
+                        return (Void) null; });
 
-//            ListenableFuture<ResponseEntity<String>> f1 = rt.getForEntity(URL1, String.class, "hello " + idx);
-//            f1.addCallback(s->{
-//                ListenableFuture<ResponseEntity<String>> f2 = rt.getForEntity(URL2, String.class, + s.getBody());
-//                f2.addCallback(s2->{
-//                    ListenableFuture<String> f3 = myService.work(s2.getBody());
-//                    f3.addCallback(s3-> {
-//                        dr.setResult(s3);
-//                    }, e->{
-//                        dr.setErrorResult(e.getMessage());
-//                    });
-//                }, e->{
-//                    dr.setErrorResult(e.getMessage());
-//                });
-//            }, e-> {
-//                // 비동기 방식에서는 에러를 던져도 어느 스택트레이스에 타고 있는지 파악이 어렵다.
-//                dr.setErrorResult(e.getMessage());
-//            });
             return dr;
+        }
+
+        // lf -> cf
+        <T> CompletableFuture<T> toCF(ListenableFuture<T> lf) {
+            CompletableFuture<T> cf = new CompletableFuture<>();
+            lf.addCallback(s-> cf.complete(s), e-> cf.completeExceptionally(e));
+
+            return cf;
         }
     }
 
