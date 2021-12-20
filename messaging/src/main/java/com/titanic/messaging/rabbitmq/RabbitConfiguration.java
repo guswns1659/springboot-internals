@@ -31,8 +31,8 @@ public class RabbitConfiguration {
     @Bean("oldRabbitConnectionFactory")
     @Primary
     public ConnectionFactory oldRabbitConnectionFactory(
+            @Value("${spring.rabbitmq.old.port}") int port,
             @Value("${spring.rabbitmq.host}") String host,
-            @Value("${spring.rabbitmq.port}") int port,
             @Value("${spring.rabbitmq.username}") String username,
             @Value("${spring.rabbitmq.password}") String password,
             @Value("${spring.rabbitmq.virtual-host}") String virtualHost
@@ -49,23 +49,27 @@ public class RabbitConfiguration {
 
     @Bean("oldRabbitTemplate")
     @Primary
-    public RabbitTemplate oldRabbitTemplate(@Qualifier("oldRabbitConnectionFactory") ConnectionFactory connectionFactory) {
+    public RabbitTemplate oldRabbitTemplate(
+            @Qualifier("oldRabbitConnectionFactory") ConnectionFactory connectionFactory) {
         return new RabbitTemplate(connectionFactory);
     }
 
     @Bean("oldRabbitAdmin")
-    public RabbitAdmin oldRabbitAdmin(@Qualifier("oldRabbitConnectionFactory") ConnectionFactory connectionFactory) {
+    public RabbitAdmin oldRabbitAdmin(
+            @Qualifier("oldRabbitConnectionFactory") ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
 
 
     @Bean("newRabbitTemplate")
-    public RabbitTemplate newRabbitTemplate(@Qualifier("newRabbitConnectionFactory") ConnectionFactory connectionFactory) {
+    public RabbitTemplate newRabbitTemplate(
+            @Qualifier("newRabbitConnectionFactory") ConnectionFactory connectionFactory) {
         return new RabbitTemplate(connectionFactory);
     }
 
     @Bean("newRabbitAdmin")
-    public RabbitAdmin newRabbitAdmin(@Qualifier("newRabbitConnectionFactory") ConnectionFactory connectionFactory) {
+    public RabbitAdmin newRabbitAdmin(
+            @Qualifier("newRabbitConnectionFactory") ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
 
@@ -78,13 +82,14 @@ public class RabbitConfiguration {
         configurer.configure(factory, connectionFactory);
         return factory;
     }
+
     @Bean("newRabbitConnectionFactory")
     public ConnectionFactory newRabbitConnectionFactory(
-            @Value("${new.rabbitmq.host:localhost}") String host,
-            @Value("${spring.rabbitmq.port.new:5672}") int port,
-            @Value("${spring.rabbitmq.username.new:guest}") String username,
-            @Value("${spring.rabbitmq.password.new:guest}") String password,
-            @Value("${spring.rabbitmq.virtual-host.new:/}") String virtualHost
+            @Value("${spring.rabbitmq.new.port}") int port,
+            @Value("${spring.rabbitmq.host}") String host,
+            @Value("${spring.rabbitmq.username}") String username,
+            @Value("${spring.rabbitmq.password}") String password,
+            @Value("${spring.rabbitmq.virtual-host}") String virtualHost
     ) {
         CachingConnectionFactory factory = new CachingConnectionFactory();
         factory.setHost(host);
