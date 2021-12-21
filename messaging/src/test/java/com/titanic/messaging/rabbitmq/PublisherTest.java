@@ -8,11 +8,11 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 
-@EmbeddedKafka(partitions = 3)
+//@EmbeddedKafka(partitions = 3)
 @SpringBootTest
 @ActiveProfiles("test")
 public class PublisherTest {
@@ -32,6 +32,13 @@ public class PublisherTest {
 
     @Autowired
     private RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry;
+
+    @Value("${spring.rabbitmq.old.listener}")
+    private String oldListener;
+
+    @Value("${spring.rabbitmq.new.listener}")
+    private String newListener;
+
 
     @BeforeEach
     void setUp() {
@@ -54,7 +61,7 @@ public class PublisherTest {
         //when
         oldJackPublisher.publishMessages(item);
         rabbitListenerEndpointRegistry.getListenerContainer(
-                "jackListener"
+                oldListener
         ).start();
     }
 
@@ -75,5 +82,22 @@ public class PublisherTest {
 
         // then - listen됐다는 것을 verify하면 될 거 같은데 현재 listener는 다른 상태를 가지고 있지 않아서 생략
 
+    }
+
+    @Test
+    void 구래빗에서_신래빗으로_메시지_프록시_정상동작() throws JsonProcessingException, InterruptedException {
+        // given
+        Data item2 = Data.builder().name("item2").build();
+
+        // when
+        oldJackPublisher.publishMessages(item2);
+
+        rabbitListenerEndpointRegistry.getListenerContainer(
+                newListener
+        ).start();
+
+        Thread.sleep(2000); // consume 되기 전에 앱이 종료되서 sleep 추가
+
+        // then
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ public class NewJackPublisher {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
+    @Value("${spring.rabbitmq.new.queue}")
+    private String queue;
+
     public NewJackPublisher(@Qualifier("newRabbitTemplate") RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
         this.rabbitTemplate = rabbitTemplate;
         this.objectMapper = objectMapper;
@@ -22,7 +26,7 @@ public class NewJackPublisher {
 
     public void publishMessage(Data data) throws JsonProcessingException {
         String message = objectMapper.writeValueAsString(data);
-        rabbitTemplate.convertAndSend("items", message);
+        rabbitTemplate.convertAndSend(queue, message);
     }
 }
 
@@ -30,8 +34,8 @@ public class NewJackPublisher {
 class NewJackListener {
 
     @RabbitListener(
-            id = "jackListener2",
-            queues = "items",
+            id = "${spring.rabbitmq.new.listener}",
+            queues = "${spring.rabbitmq.new.queue}",
             containerFactory = "newListenerContainerFactory")
     public void listen(@Payload Message message) {
         System.out.println("***** listen new message : " + message);

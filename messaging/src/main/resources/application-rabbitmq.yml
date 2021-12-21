@@ -6,8 +6,12 @@ spring:
     host: localhost
     new:
       port: 5673
+      listener: newListener
+      queue: items
     old:
       port: 5672
+      listener: oldListener
+      queue: items
     listener:
       direct:
         auto-startup: false # for testing

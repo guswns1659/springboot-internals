@@ -38,8 +38,10 @@ spring:
     host: localhost
     new:
       port: 5673
+      listener: oldListener
     old:
       port: 5672
+      listener: newListener
     listener:
       direct:
         auto-startup: false # for testing
