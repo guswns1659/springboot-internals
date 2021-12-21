@@ -1,4 +1,4 @@
-package com.titanic.batch.batch;
+package com.titanic.webmvc.batch;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
