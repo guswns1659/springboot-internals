@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -28,8 +27,18 @@ public class WebfluxApplication {
         @GetMapping("/rest")
         public Mono<String> rest(@RequestParam("idx") int idx) {
             WebClient webClient = WebClient.create();
-            Mono<ClientResponse> response = webClient.get().uri(URL1, idx).exchangeToMono(Mono::just);
-            return Mono.just("rest");
+            // webClient는 pub이기 때문에 구독하지 않으면 실행되지 않는다.
+            // 스프링이 리턴타입을 보고 Mono, Flux면 자동으로 구독하고 pub에 request도 보낸다.
+            // --------
+            // bodyToMono는 리턴이 Mono<String>이기 때문에 기존부터 Mono로 감싸져있기 때문에 map을 쓰면 Mono<Mono<>>가 된다.
+            // flatMap으로 평평하게 만들어줘야한다.
+            // --------
+            // return은 main쓰레드가 바로 종료되기때문에 바로되지만 deferredResult처럼 결과를 담고 있는 형태가 된다.
+            return webClient
+                    .get()
+                    .uri(URL1, idx)
+                    .exchangeToMono(Mono::just)
+                    .flatMap(res -> res.bodyToMono(String.class));
         }
     }
 
