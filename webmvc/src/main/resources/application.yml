@@ -4,6 +4,9 @@ spring:
       - jack-prod
       - jack-dev
       - h2
+  batch:
+    job:
+      enabled: false
 #  jpa:
 #    hibernate:
 #      ddl-auto: none # Remove comments if you want to use schema.sql and data.sql
