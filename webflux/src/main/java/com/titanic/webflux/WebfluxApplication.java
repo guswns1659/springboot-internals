@@ -37,8 +37,7 @@ public class WebfluxApplication {
             return webClient
                     .get()
                     .uri(URL1, idx)
-                    .exchangeToMono(Mono::just)
-                    .flatMap(res -> res.bodyToMono(String.class));
+                    .retrieve().bodyToMono(String.class);
         }
     }
 
