@@ -37,7 +37,9 @@ public class WebfluxApplication {
             return webClient
                     .get()
                     .uri(URL1, idx)
-                    .retrieve().bodyToMono(String.class);
+                    .retrieve().bodyToMono(String.class)
+                    .flatMap(res -> webClient.get().uri(URL2, res).retrieve().bodyToMono(String.class));
+
         }
     }
 
