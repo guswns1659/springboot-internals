@@ -1,25 +1,41 @@
 package com.titanic.webflux;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
+
 @SpringBootApplication
 public class WebfluxApplication {
+
+    public static final String URL1 = "http://localhost:8081/service?req={req}";
+    public static final String URL2 = "http://localhost:8081/service2?req={req}";
 
     public static void main(String[] args) {
         SpringApplication.run(WebfluxApplication.class, args);
     }
 
-    public static final String URL1 = "http://localhost:8081/service?req={req}";
-    public static final String URL2 = "http://localhost:8081/service2?req={req}";
+    @Service
+    public static class MyService {
+        @Async
+        public CompletableFuture<String> work(String req) {
+            return CompletableFuture.completedFuture(req + "/asyncwork");
+        }
+    }
 
     @RestController
     class WebfluxController {
+
+        @Autowired
+        MyService myService;
 
         /**
          * Mono는 List와 같은 컨테이너라 생각하면된다. 컨테이너에 담아두면 컨테이너의 기능을 사용할 수 있다.
@@ -38,8 +54,9 @@ public class WebfluxApplication {
                     .get()
                     .uri(URL1, idx)
                     .retrieve().bodyToMono(String.class)
-                    .flatMap(res -> webClient.get().uri(URL2, res).retrieve().bodyToMono(String.class));
-
+                    .flatMap(res -> webClient.get().uri(URL2, res).retrieve().bodyToMono(String.class))
+                    // fromCompletionStage의 응답이 Mono<?> 이기에 flatMap 사용
+                    .flatMap(res2 -> Mono.fromCompletionStage(myService.work(res2)));
         }
     }
 
