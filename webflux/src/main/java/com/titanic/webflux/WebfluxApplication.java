@@ -1,9 +1,13 @@
 package com.titanic.webflux;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +18,8 @@ import reactor.core.publisher.Mono;
 import java.util.concurrent.CompletableFuture;
 
 @SpringBootApplication
+@Slf4j
+@EnableAsync
 public class WebfluxApplication {
 
     public static final String URL1 = "http://localhost:8081/service?req={req}";
@@ -28,6 +34,16 @@ public class WebfluxApplication {
         @Async
         public CompletableFuture<String> work(String req) {
             return CompletableFuture.completedFuture(req + "/asyncwork");
+        }
+
+        @Bean
+        public ThreadPoolTaskExecutor executor() {
+            ThreadPoolTaskExecutor tp = new ThreadPoolTaskExecutor();
+            tp.setCorePoolSize(10);
+            tp.setQueueCapacity(100);
+            tp.setThreadNamePrefix("jack-");
+            tp.initialize();
+            return tp;
         }
     }
 
@@ -54,9 +70,12 @@ public class WebfluxApplication {
                     .get()
                     .uri(URL1, idx)
                     .retrieve().bodyToMono(String.class)
+                    .doOnNext(s -> log.info(s))
                     .flatMap(res -> webClient.get().uri(URL2, res).retrieve().bodyToMono(String.class))
                     // fromCompletionStage의 응답이 Mono<?> 이기에 flatMap 사용
-                    .flatMap(res2 -> Mono.fromCompletionStage(myService.work(res2)));
+                    .doOnNext(c -> log.info("***** nio", c))
+                    .flatMap(res2 -> Mono.fromCompletionStage(myService.work(res2)))
+                    .doOnNext(c -> log.info(">>>> service thread" , c));
         }
     }
 
