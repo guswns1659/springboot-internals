@@ -70,12 +70,12 @@ public class WebfluxApplication {
                     .get()
                     .uri(URL1, idx)
                     .retrieve().bodyToMono(String.class)
-                    .doOnNext(s -> log.info(s))
+                    .doOnNext(s -> log.info("@@@@@ nio = {}", s))
                     .flatMap(res -> webClient.get().uri(URL2, res).retrieve().bodyToMono(String.class))
                     // fromCompletionStage의 응답이 Mono<?> 이기에 flatMap 사용
-                    .doOnNext(c -> log.info("***** nio", c))
+                    .doOnNext(c -> log.info("***** nio = {}", c))
                     .flatMap(res2 -> Mono.fromCompletionStage(myService.work(res2)))
-                    .doOnNext(c -> log.info(">>>> service thread" , c));
+                    .doOnNext(c -> log.info(">>>> service thread = {}" , c));
         }
     }
 
