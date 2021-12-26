@@ -15,7 +15,7 @@ allprojects {
 
     dependencies {
         // lombok
-        implementation("org.projectlombok:lombok")
+        compileOnly("org.projectlombok:lombok")
         annotationProcessor("org.projectlombok:lombok")
     }
     tasks {
