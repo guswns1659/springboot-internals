@@ -13,6 +13,16 @@ public class MonoController {
 
     @GetMapping("/")
     Mono<String> hello() {
-        return Mono.just("Hello Webflux").log();
+        log.info("pos1");
+        String msg = generateHello();
+        // 이 시점이 아니라 return할 때 실행된다. 이유는 구독이 return할 때 발생하기 때문이다.
+        Mono<String> m = Mono.just(msg).log();
+        log.info("pos2");
+        return m;
+    }
+
+    private String generateHello() {
+        log.info("method generateHello()");
+        return "Hello Mono";
     }
 }
