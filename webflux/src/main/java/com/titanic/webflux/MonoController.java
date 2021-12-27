@@ -11,12 +11,15 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class MonoController {
 
+    /**
+     * Mono.just : subscribe 시점이 아닌 미리 데이터를 만들어 놓는다.
+     * Mono.fromSupplier : subscribe 시점에 데이터가 만들어진다.
+     */
     @GetMapping("/")
     Mono<String> hello() {
         log.info("pos1");
-        String msg = generateHello();
         // 이 시점이 아니라 return할 때 실행된다. 이유는 구독이 return할 때 발생하기 때문이다.
-        Mono<String> m = Mono.just(msg).log();
+        Mono<String> m = Mono.fromSupplier(() -> generateHello()).log();
         log.info("pos2");
         return m;
     }
