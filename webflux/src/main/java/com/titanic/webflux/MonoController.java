@@ -23,12 +23,10 @@ public class MonoController {
     @GetMapping("/")
     Mono<String> hello() {
         log.info("pos1");
-        String msg = generateHello();
-        Mono<String> m = Mono.just(msg).doOnNext(c -> log.info(c)).log();
-        String msg2 = m.block();
-        log.info("block after Call?");
-        log.info("pos2 : {}", msg2);
-        return m;
+        log.info("pos2");
+        return Mono.fromCallable(() -> generateHello())
+                .doOnNext(c -> log.info(c))
+                .log();
     }
 
     private String generateHello() {
