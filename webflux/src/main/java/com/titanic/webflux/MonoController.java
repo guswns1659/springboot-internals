@@ -14,21 +14,20 @@ public class MonoController {
     /**
      * Mono.just : subscribe 시점이 아닌 미리 데이터를 만들어 놓는다.
      * Mono.fromSupplier : subscribe 시점에 데이터가 만들어진다.
+     * ---------------
+     * Mono, Flux는 하나 이상의 subscriber를 가질 수 있다.
+     * return 전에 subscribe하면 리액티브 스트림이 바로 실행된다.
+     * Cold source, DB 호출처럼 미리 정해진 코드는 구독할 때마다 처음부터 replay된다.
+     * Hot source, 사용자 입력처럼 미리 정해지지 않는 코드는 구독할 때마다 reploy가 아닌 다음 요청부터 구독한다.
      */
     @GetMapping("/")
     Mono<String> hello() {
         log.info("pos1");
-        // 이 시점이 아니라 return할 때 실행된다. 이유는 구독이 return할 때 발생하기 때문이다.
-        Mono<String> m = Mono.fromSupplier(() -> generateHello()).log();
-        /**
-         * Mono, Flux는 하나 이상의 subscriber를 가질 수 있다.
-         * return 전에 subscribe하면 리액티브 스트림이 바로 실행된다.
-         *
-         * Cold source, DB 호출처럼 미리 정해진 코드는 구독할 때마다 처음부터 replay된다.
-         * Hot source, 사용자 입력처럼 미리 정해지지 않는 코드는 구독할 때마다 reploy가 아닌 다음 요청부터 구독한다.
-         */
-        m.subscribe();
-        log.info("pos2");
+        String msg = generateHello();
+        Mono<String> m = Mono.just(msg).doOnNext(c -> log.info(c)).log();
+        String msg2 = m.block();
+        log.info("block after Call?");
+        log.info("pos2 : {}", msg2);
         return m;
     }
 
