@@ -20,8 +20,8 @@ public class FluxController {
 
     /**
      *  Diff between Mono and Flux
-        // Impossible to operate on each elements of list when Lists exists in Mono.
-        // Possible to operate on each elements of list when Lists exists in Flux.
+     * Impossible to operate on each elements of list when Lists exists in Mono.
+     * Possible to operate on each elements of list when Lists exists in Flux.
      */
 
     @GetMapping("/event/{id}")
@@ -32,14 +32,10 @@ public class FluxController {
 
     @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Event> events() {
-        Flux<Event> es = Flux
-                .<Event, Long>generate(() -> 1L, (id, sink) -> {
-                    sink.next(new Event(id, "value " + id));
-                    return id + 1;
-                });
+        Flux<String> es = Flux.generate(sink -> sink.next("Value"));
         Flux<Long> interval = Flux.interval(Duration.ofSeconds(1));
 
-        return Flux.zip(es, interval).map(tu -> tu.getT1());
+        return Flux.zip(es, interval).map(tu -> new Event(tu.getT2(), tu.getT1())).take(10);
     }
 
     @Data @AllArgsConstructor
