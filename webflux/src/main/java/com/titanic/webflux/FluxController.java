@@ -33,7 +33,10 @@ public class FluxController {
     @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Event> events() {
         return Flux
-                .<Event>generate(sink -> sink.next(new Event(System.currentTimeMillis(), "value")))
+                .<Event, Long>generate(() -> 1L, (id, sink) -> {
+                    sink.next(new Event(id, "value " + id));
+                    return id + 1;
+                })
                 .delayElements(Duration.ofSeconds(1)) // parallel thread delay onNext
                 .take(10);
     }
