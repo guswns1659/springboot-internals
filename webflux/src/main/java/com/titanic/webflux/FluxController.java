@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/flux")
@@ -34,7 +33,7 @@ public class FluxController {
     @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Event> events() {
         return Flux
-                .fromStream(Stream.generate(() -> new Event(System.currentTimeMillis(), "value")))
+                .<Event>generate(sink -> sink.next(new Event(System.currentTimeMillis(), "value")))
                 .delayElements(Duration.ofSeconds(1)) // parallel thread delay onNext
                 .take(10);
     }
