@@ -9,18 +9,25 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RestController
 @RequestMapping("/flux")
 public class FluxController {
 
     @GetMapping("/event/{id}")
-    public Mono<Event> event(@PathVariable long id) {
-        return Mono.just(new Event(id, "event " + id));
+    public Mono<List<Event>> event(@PathVariable long id) {
+        List<Event> events = Arrays.asList(new Event(1L, "event1"), new Event(2L, "event2"));
+        // Impossible to operate on each elements of list when Lists exists in Mono.
+        return Mono.just(events);
     }
 
     @GetMapping("/events")
     public Flux<Event> events() {
-        return Flux.just(new Event(1L, "event1"), new Event(2L, "event2"));
+        List<Event> events = Arrays.asList(new Event(1L, "event1"), new Event(2L, "event2"));
+        // Possible to operate on each elements of list when Lists exists in Flux.
+        return Flux.fromIterable(events);
     }
 
     @Data @AllArgsConstructor
