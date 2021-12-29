@@ -2,6 +2,7 @@ package com.titanic.webflux;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,7 @@ public class FluxController {
         return Mono.just(events);
     }
 
-    @GetMapping("/events")
+    @GetMapping(value = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Event> events() {
         List<Event> events = Arrays.asList(new Event(1L, "event1"), new Event(2L, "event2"));
         // Possible to operate on each elements of list when Lists exists in Flux.
