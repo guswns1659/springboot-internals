@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.Flow;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,18 +41,7 @@ public class Operators {
 
 
         // mapPub, multiply 10
-        Flow.Publisher<Integer> mapPub = new Flow.Publisher<>() {
-
-            @Override
-            public void subscribe(Flow.Subscriber<? super Integer> sub) {
-                pub.subscribe(new DelegateSub(sub) {
-                    @Override
-                    public void onNext(Integer item) {
-                        sub.onNext(item * 10);
-                    }
-                });
-            }
-        };
+        Flow.Publisher<Integer> mapPub = getMapPub(pub, 0, (a, b) -> a+b);
 
         // sub
         Flow.Subscriber<Integer> sub = new Flow.Subscriber<>() {
@@ -79,5 +69,22 @@ public class Operators {
         };
 
         mapPub.subscribe(sub);
+    }
+
+    private static Flow.Publisher<Integer> getMapPub(Flow.Publisher<Integer> pub, int init, BiFunction<Integer, Integer, Integer> bif) {
+        return sub -> pub.subscribe(new DelegateSub(sub) {
+            int result = init;
+
+            @Override
+            public void onNext(Integer item) {
+                result = bif.apply(result, item);
+            }
+
+            @Override
+            public void onComplete() {
+                sub.onNext(result);
+                sub.onComplete();
+            }
+        });
     }
 }
