@@ -1,4 +1,4 @@
-package com.titanic.webflux;
+package com.titanic.webflux.tobylecture;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
