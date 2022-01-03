@@ -44,6 +44,7 @@ configure(subprojects.filter { it.name == "messaging" }) {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("org.springframework.kafka:spring-kafka")
         implementation("org.springframework.amqp:spring-rabbit")
+        implementation("org.springframework.boot:spring-boot-starter-aop")
         implementation("org.springframework.boot:spring-boot-starter-data-redis")
         implementation("redis.clients:jedis")
 
