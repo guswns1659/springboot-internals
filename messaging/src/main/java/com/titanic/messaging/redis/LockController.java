@@ -17,9 +17,8 @@ public class LockController {
     private LockService lockService;
 
     @GetMapping("/redis")
-    public String lock() throws InterruptedException {
-        lockService.pointCut("args");
-        Thread.sleep(3000);
+    public String lock(String userId) throws InterruptedException {
+        lockService.pointCut(userId);
         return "success";
     }
 }
@@ -28,8 +27,8 @@ public class LockController {
 @Slf4j
 class LockService {
     @JackLock
-    public String pointCut(String args) {
-        log.info(">>>>>>>>>>>>> pointCut args - {}", args);
+    public String pointCut(String userId) {
+        log.info(">>>>>>>>>>>>> pointCut userId - {}", userId);
         return "pointCut";
     }
 }
