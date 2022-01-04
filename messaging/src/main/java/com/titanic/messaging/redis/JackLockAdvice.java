@@ -9,6 +9,7 @@ import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -18,15 +19,25 @@ import java.util.concurrent.TimeUnit;
 public class JackLockAdvice {
 
     private final RedisTemplate<String, String> jackStringRedisTemplate;
+    private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
-    public JackLockAdvice(RedisTemplate<String, String> jackStringRedisTemplate) {
+    public JackLockAdvice(RedisTemplate<String, String> jackStringRedisTemplate, UserRepository userRepository, EntityManager entityManager) {
         this.jackStringRedisTemplate = jackStringRedisTemplate;
+        this.userRepository = userRepository;
+        this.entityManager = entityManager;
     }
 
     private String getAccountIdFromUserId(JoinPoint joinPoint, LockType lockType) {
         Object[] args = joinPoint.getArgs();
         log.info("joinPoint.getArgs() = {}", args);
-        return String.valueOf(args[0]);
+        Optional<User> maybeUser = userRepository.findByAccountId(String.valueOf(args[0]));
+        if (maybeUser.isPresent()) {
+            User user = maybeUser.get();
+            entityManager.detach(user);
+            return user.getAccountId();
+        }
+        return "";
     }
 
     @Around("@annotation(jackLock)")
