@@ -34,7 +34,6 @@ public class JackLockAdvice {
         String accountId = getAccountIdFromUserId(joinPoint, jackLock.value());
 
         log.info("accountId = {}", accountId);
-
         log.info("LOCK start - {}", accountId);
 
         String key = accountId;
@@ -47,17 +46,32 @@ public class JackLockAdvice {
                 if (isExpiredLock(key)) {
                     jackStringRedisTemplate.delete(key);
                 }
-                log.info("lock fail, accountId - {}", key);
+                log.info("Already locked, accountId - {}", key);
                 throw new RuntimeException();
             }
             jackStringRedisTemplate.expire(key, 60, TimeUnit.SECONDS);
         } catch (RedisConnectionFailureException e) {
+            log.error("Redis fail, accountId - {}", accountId);
+            jackStringRedisTemplate.delete(key);
             throw e;
         }
 
         log.info("LOCK success - {}", accountId);
 
-        return joinPoint.proceed();
+        try {
+            return joinPoint.proceed();
+        } finally {
+            releaseLock(key);
+        }
+    }
+
+    private void releaseLock(String key) {
+        log.info("LOCK release - {}", key);
+        try {
+            jackStringRedisTemplate.delete(key);
+        } catch (Exception e) {
+            log.info("LOCK release fail");
+        }
     }
 
     private Boolean isExpiredLock(String key) {
