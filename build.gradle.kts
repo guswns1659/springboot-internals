@@ -46,6 +46,8 @@ configure(subprojects.filter { it.name == "messaging" }) {
         implementation("org.springframework.amqp:spring-rabbit")
         implementation("org.springframework.boot:spring-boot-starter-aop")
         implementation("org.springframework.boot:spring-boot-starter-data-redis")
+        implementation("com.h2database:h2:1.4.200")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("redis.clients:jedis")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")

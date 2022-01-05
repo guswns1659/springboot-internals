@@ -4,9 +4,7 @@ spring:
       - rabbitmq
       - kafka
       - redis
-#  jpa:
-#    hibernate:
-#      ddl-auto: none # Remove comments if you want to use schema.sql and data.sql
+      - h2
 
 logging:
   level:
