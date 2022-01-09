@@ -3,7 +3,7 @@ spring:
     include:
       - jack-prod
       - jack-dev
-      - h2
+#      - shard
   batch:
     job:
       enabled: false
