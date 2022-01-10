@@ -1,9 +1,9 @@
 spring:
   shard-datasource:
-    username: root
+    username: main-jack
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-    ddl-auto: validate
+    ddl-auto: create
     type: main
     main:
       shards:
