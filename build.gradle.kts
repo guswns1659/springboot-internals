@@ -65,6 +65,8 @@ configure(subprojects.filter { it.name == "webmvc" }) {
         // For NioEventLoopGroup
         implementation("io.netty:netty-all:4.1.68.Final")
 
+        annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor")
+
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 }
