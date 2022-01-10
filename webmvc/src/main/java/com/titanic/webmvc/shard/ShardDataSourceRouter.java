@@ -11,9 +11,8 @@ public class ShardDataSourceRouter extends AbstractRoutingDataSource {
         super.setTargetDataSources(targetDataSources);
     }
 
-    // TODO(jack.comeback) : Need to impl
     @Override
     protected Object determineCurrentLookupKey() {
-        return null;
+        return UserContextHolder.getShardDbName().orElse(ShardDb.getDefaultLookupKey());
     }
 }
