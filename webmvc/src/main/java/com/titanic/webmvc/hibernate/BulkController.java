@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -20,7 +19,7 @@ interface DocumentRepository extends JpaRepository<Document, Long> {
 
 }
 
-@RestController
+//@RestController
 @RequiredArgsConstructor
 public class BulkController {
 
