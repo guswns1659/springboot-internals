@@ -1,5 +1,7 @@
-package com.titanic.webmvc.shard;
+package com.titanic.webmvc.shard.service;
 
+import com.titanic.webmvc.shard.ShardDb;
+import com.titanic.webmvc.shard.ShardingConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
