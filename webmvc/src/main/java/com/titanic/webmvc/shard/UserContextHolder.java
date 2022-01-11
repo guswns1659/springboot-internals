@@ -27,6 +27,10 @@ public class UserContextHolder {
                 .map(ShardDb::getDbLookupKey);
     }
 
+    public static void clearShardDb() {
+        getUserContext().get().setShardDb(null);
+    }
+
     @Data
     protected static class Context {
 
