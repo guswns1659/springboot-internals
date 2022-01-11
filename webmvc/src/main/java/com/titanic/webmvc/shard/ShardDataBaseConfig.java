@@ -47,7 +47,6 @@ public class ShardDataBaseConfig {
     @Bean
     @ConditionalOnProperty(name = "spring.shard-datasource.type", havingValue = "main")
     public DataSource shardDataSourceMain() {
-        // TODO(jack.comeback) : Need to get dataSourceMap
         Map<Object, Object> dataSourceMap = getDataSourceMap(false);
 
         ShardDataSourceRouter router = new ShardDataSourceRouter();
@@ -60,9 +59,9 @@ public class ShardDataBaseConfig {
     private Map<Object, Object> getDataSourceMap(boolean isChild) {
         List<Shard> shards;
         if (isChild) {
-            shards = shardDataBaseProperty.getMain().getShards();
-        } else {
             shards = shardDataBaseProperty.getChild().getShards();
+        } else {
+            shards = shardDataBaseProperty.getMain().getShards();
         }
 
         Map<Object, Object> dataSourceMap = new LinkedHashMap<>();
@@ -78,7 +77,7 @@ public class ShardDataBaseConfig {
 
         config.setJdbcUrl(shard.getUrl());
         config.setUsername(shardDataBaseProperty.getUsername());
-        config.setPoolName(shardDataBaseProperty.getPassword());
+        config.setPassword(shardDataBaseProperty.getPassword());
         config.setDriverClassName(shardDataBaseProperty.getDriverClassName());
         config.setMaximumPoolSize(10);
         config.setConnectionTimeout(5000);
@@ -96,7 +95,7 @@ public class ShardDataBaseConfig {
 
     @Bean(name = "shardEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean shardEntityManagerFactory(
-            @Value("spring.shard-datasource.type") DatasourceType datasourceType
+            @Value("${spring.shard-datasource.type}") DatasourceType datasourceType
     ) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 
