@@ -35,7 +35,7 @@ import static com.titanic.webmvc.shard.ShardDataBaseProperty.Shard;
 @EnableJpaRepositories(
         entityManagerFactoryRef = "shardEntityManagerFactory",
         transactionManagerRef = "shardTransactionManager",
-        basePackages = "com.titanic.webmvc.shard.entity"
+        basePackages = "com.titanic.webmvc.shard.repository"
 )
 @RequiredArgsConstructor
 @EnableTransactionManagement
@@ -115,6 +115,9 @@ public class ShardDataBaseConfig {
 
         HashMap<String, Object> properties = new HashMap<>();
         // TODO(jack.comeback) : properties Map 설정 추가 필요
+        properties.put("hibernate.hbm2ddl.auto", env.getProperty("spring.shard-datasource.ddl-auto"));
+
+        em.setJpaPropertyMap(properties);
 
         return em;
     }

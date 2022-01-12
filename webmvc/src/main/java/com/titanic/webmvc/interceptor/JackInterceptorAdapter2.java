@@ -2,11 +2,10 @@ package com.titanic.webmvc.interceptor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 @Slf4j
 public class JackInterceptorAdapter2 extends WebMvcConfigurerAdapter {

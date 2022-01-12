@@ -1,9 +1,9 @@
 package com.titanic.webmvc.shard.repository;
 
-import com.titanic.webmvc.shard.entity.ShardTx;
+import com.titanic.webmvc.shard.entity.UserTx;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ShardTxRepository extends JpaRepository<ShardTx, Long> {
+public interface UserTxRepository extends JpaRepository<UserTx, Long> {
 }
