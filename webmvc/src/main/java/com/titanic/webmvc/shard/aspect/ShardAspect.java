@@ -5,17 +5,21 @@ import com.titanic.webmvc.shard.ShardDb;
 import com.titanic.webmvc.shard.UserContextHolder;
 import com.titanic.webmvc.shard.service.ShardNumChecker;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
 
 @Aspect
+@Component
 @RequiredArgsConstructor
+@Slf4j
 public class ShardAspect {
 
     private final ShardNumChecker shardNumChecker;
 
-    @Around("@annotation(shard) && args(userId)")
+    @Around("@annotation(shard) && args(userId, ..)")
     public Object shardAround(ProceedingJoinPoint joinPoint, Shard shard, Long userId) throws Throwable {
         if (userId == null) {
             throw new IllegalStateException("Required userId for shardDB");
