@@ -64,6 +64,10 @@ configure(subprojects.filter { it.name == "webmvc" }) {
         implementation("org.springframework.boot:spring-boot-starter-batch:2.5.1")
         // For NioEventLoopGroup
         implementation("io.netty:netty-all:4.1.68.Final")
+        implementation("mysql:mysql-connector-java")
+
+        annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor")
+
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
