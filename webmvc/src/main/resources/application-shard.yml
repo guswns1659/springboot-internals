@@ -4,23 +4,23 @@ spring:
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
     ddl-auto: validate
+    type: child
     main:
-      ## TODO(jack.comeback) : database 지정 필요
       shards:
         - name: SHARD-00
-          url: jdbc:mysql://localhost:3307
+          url: jdbc:mysql://localhost:3307/shard00
         - name: SHARD-01
-          url: jdbc:mysql://localhost:3307
+          url: jdbc:mysql://localhost:3307/shard01
         - name: SHARD-02
-          url: jdbc:mysql://localhost:3307
+          url: jdbc:mysql://localhost:3307/shard02
     child:
       shards:
         - name: SHARD-00
-          url: jdbc:mysql://localhost:3308
+          url: jdbc:mysql://localhost:3308/shard00
         - name: SHARD-01
-          url: jdbc:mysql://localhost:3308
+          url: jdbc:mysql://localhost:3308/shard01
         - name: SHARD-02
-          url: jdbc:mysql://localhost:3308
+          url: jdbc:mysql://localhost:3308/shard02
 
   jpa:
     database: mysql
