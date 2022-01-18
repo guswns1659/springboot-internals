@@ -75,5 +75,8 @@ configure(subprojects.filter { it.name == "webmvc" }) {
 configure(subprojects.filter { it.name == "webflux" }) {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-webflux")
+        // For sync DB wrapping test
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        implementation("com.h2database:h2:1.4.200")
     }
 }
