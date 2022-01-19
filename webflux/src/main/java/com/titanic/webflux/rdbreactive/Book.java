@@ -2,6 +2,7 @@ package com.titanic.webflux.rdbreactive;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Book {
 
     @Id
@@ -18,4 +20,9 @@ public class Book {
     private Integer id;
     private String title;
     private Integer publishingYear;
+
+    public Book(String title, Integer publishingYear) {
+        this.title = title;
+        this.publishingYear = publishingYear;
+    }
 }
