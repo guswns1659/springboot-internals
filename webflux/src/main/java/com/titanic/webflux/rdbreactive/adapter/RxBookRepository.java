@@ -1,13 +1,14 @@
-package com.titanic.webflux.rdbreactive;
+package com.titanic.webflux.rdbreactive.adapter;
 
+import com.titanic.webflux.rdbreactive.Book;
+import com.titanic.webflux.rdbreactive.BookJpaRepository;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
-@Repository
+//@Repository
 public class RxBookRepository extends ReactiveCrudRepositoryAdapter<Book, Integer, BookJpaRepository> {
 
     public RxBookRepository(
