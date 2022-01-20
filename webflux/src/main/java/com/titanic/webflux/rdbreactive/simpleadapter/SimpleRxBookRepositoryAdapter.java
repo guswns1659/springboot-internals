@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
+import java.util.List;
+
 @Component
 public class SimpleRxBookRepositoryAdapter {
 
@@ -30,4 +32,23 @@ public class SimpleRxBookRepositoryAdapter {
                 .orElseThrow(() -> new RuntimeException("[id] - " + id + ", no matching entity")))
                 .subscribeOn(scheduler);
     }
+
+    // Note : Bad Pattern because of delete one by one.
+    public Mono<Object> deleteAll() {
+        return Mono.fromRunnable(() -> simpleRxBookRepository.deleteAll())
+                .subscribeOn(scheduler);
+    }
+
+    // Bulk delete
+    public Mono<Object> deleteAllInBatch() {
+        return Mono.fromRunnable(() -> simpleRxBookRepository.deleteAllInBatch())
+                .subscribeOn(scheduler);
+    }
+
+    // Note : Recommended
+    public Mono<Object> deleteAllByIds(List<Integer> ids) {
+        return Mono.fromRunnable(() -> simpleRxBookRepository.deleteAllByIds(ids))
+                .subscribeOn(scheduler);
+    }
+
 }
