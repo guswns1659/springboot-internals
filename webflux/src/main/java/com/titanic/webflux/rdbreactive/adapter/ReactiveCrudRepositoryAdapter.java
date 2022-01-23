@@ -1,4 +1,4 @@
-package com.titanic.webflux.rdbreactive;
+package com.titanic.webflux.rdbreactive.adapter;
 
 import org.reactivestreams.Publisher;
 import org.springframework.data.repository.CrudRepository;
