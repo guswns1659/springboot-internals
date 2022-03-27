@@ -13,13 +13,15 @@ import org.springframework.stereotype.Component;
 public class UserDao {
 
     private DataSource dataSource;
+    private JdbcContext jdbcContext;
 
-    public UserDao(DataSource dataSource) {
+    public UserDao(DataSource dataSource, JdbcContext jdbcContext) {
         this.dataSource = dataSource;
+        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) throws SQLException {
-        jdbcContextWithStatementStrategy((c) -> {
+        jdbcContext.jdbcContextWithStatementStrategy((c) -> {
             PreparedStatement ps = c.prepareStatement(
                 "insert into users(id, name, password) values(?,?,?)");
             ps.setString(1, user.getId());
@@ -56,37 +58,9 @@ public class UserDao {
         return user;
     }
 
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-        try {
-            c = dataSource.getConnection();
-            ps = stmt.makePreparedStatement(c);
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-
-                }
-
-            }
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-
-                }
-            }
-        }
-    }
-
     public void deleteAll(StatementStrategy stmt) throws SQLException {
-        jdbcContextWithStatementStrategy((c) -> c.prepareStatement("delete from users")
+        jdbcContext.jdbcContextWithStatementStrategy(
+            (c) -> c.prepareStatement("delete from users")
         );
     }
 
