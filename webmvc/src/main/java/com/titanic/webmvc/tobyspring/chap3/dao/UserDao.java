@@ -19,18 +19,8 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        Connection c = this.dataSource.getConnection();
-
-        PreparedStatement ps = c.prepareStatement(
-            "insert into users(id, name, password) values(?,?,?)");
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
-
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+        AddStatement addStatement = new AddStatement(user);
+        jdbcContextWithStatementStrategy(addStatement);
     }
 
     public User get(String id) throws SQLException {
@@ -60,12 +50,12 @@ public class UserDao {
         return user;
     }
 
-    public void deleteAll() throws SQLException {
+    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
         try {
             c = dataSource.getConnection();
-            ps = c.prepareStatement("delete from users");
+            ps = stmt.makePreparedStatement(c);
             ps.executeUpdate();
 
         } catch (SQLException e) {
@@ -87,6 +77,11 @@ public class UserDao {
                 }
             }
         }
+    }
+
+    public void deleteAll(StatementStrategy stmt) throws SQLException {
+        DeleteAllStatement deleteAllStatement = new DeleteAllStatement();
+        jdbcContextWithStatementStrategy(deleteAllStatement);
     }
 
     public int getCount() throws SQLException {
