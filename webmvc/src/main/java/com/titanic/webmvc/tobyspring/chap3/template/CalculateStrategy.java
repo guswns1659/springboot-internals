@@ -5,5 +5,5 @@ import java.io.IOException;
 
 public interface CalculateStrategy {
 
-    Integer calculate(BufferedReader br) throws IOException;
+    Integer calculate(String line, Integer result) throws IOException;
 }
