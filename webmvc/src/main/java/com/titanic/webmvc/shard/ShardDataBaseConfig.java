@@ -39,6 +39,7 @@ import static com.titanic.webmvc.shard.ShardDataBaseProperty.Shard;
 )
 @RequiredArgsConstructor
 @EnableTransactionManagement
+@ConditionalOnProperty(name = "spring.config.activate.on-profile", havingValue = "shard")
 public class ShardDataBaseConfig {
 
     private final Environment env;

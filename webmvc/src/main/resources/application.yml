@@ -1,9 +1,7 @@
 spring:
   profiles:
     include:
-      - jack-prod
-      - jack-dev
-      - shard
+      - h2
   batch:
     job:
       enabled: false
