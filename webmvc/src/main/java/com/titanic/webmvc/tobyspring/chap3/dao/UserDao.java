@@ -18,9 +18,15 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
-    public void add(User user) throws SQLException {
-        AddStatement addStatement = new AddStatement(user);
-        jdbcContextWithStatementStrategy(addStatement);
+    public void add(final User user) throws SQLException {
+        jdbcContextWithStatementStrategy((c) -> {
+            PreparedStatement ps = c.prepareStatement(
+                "insert into users(id, name, password) values(?,?,?)");
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getPassword());
+            return ps;
+        });
     }
 
     public User get(String id) throws SQLException {
@@ -80,8 +86,8 @@ public class UserDao {
     }
 
     public void deleteAll(StatementStrategy stmt) throws SQLException {
-        DeleteAllStatement deleteAllStatement = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(deleteAllStatement);
+        jdbcContextWithStatementStrategy((c) -> c.prepareStatement("delete from users")
+        );
     }
 
     public int getCount() throws SQLException {
