@@ -3,7 +3,7 @@ package com.titanic.webmvc.tobyspring.chap3.template;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public interface CalculateStrategy {
+public interface CalculateStrategy<T> {
 
-    Integer calculate(String line, Integer result) throws IOException;
+    T calculate(String line, T result) throws IOException;
 }

@@ -8,19 +8,24 @@ public class Calculator {
 
     public Integer calcSum(String filePath) throws IOException {
         return template(filePath, (line, result) ->
-            result + Integer.valueOf(line)
+            result + Integer.valueOf(line), 0
         );
     }
 
     public Integer calcMulti(String filePath) throws IOException {
         return template(filePath, (line, result) ->
-            result * Integer.valueOf(line)
+            result * Integer.valueOf(line), 1
         );
     }
 
-    private Integer template(String filePath, CalculateStrategy calculateStrategy) throws IOException {
+    public String concatenate(String filePath) throws IOException {
+        return template(filePath, (line, result) ->
+            result + line, "");
+    }
+
+    private <T> T template(String filePath, CalculateStrategy<T> calculateStrategy, T initValue) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
-        Integer result = 0;
+        T result = initValue;
         String line = null;
         while ((line = br.readLine()) != null) {
             result = calculateStrategy.calculate(line, result);
