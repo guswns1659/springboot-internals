@@ -1,7 +1,7 @@
 spring:
   profiles:
     include:
-      - h2
+      - transactional
   batch:
     job:
       enabled: false
