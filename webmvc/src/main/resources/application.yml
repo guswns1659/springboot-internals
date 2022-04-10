@@ -8,6 +8,10 @@ spring:
 #  jpa:
 #    hibernate:
 #      ddl-auto: none # Remove comments if you want to use schema.sql and data.sql
+#server:
+#  servlet:
+#    encoding:
+#      charset: UTF-8 # Set charset
 
 logging:
   level:
