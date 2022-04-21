@@ -1,4 +1,4 @@
-package com.titanic.webmvc.list;
+package com.titanic.webmvc.learningtest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
