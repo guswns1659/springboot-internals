@@ -61,6 +61,7 @@ configure(subprojects.filter { it.name == "webmvc" }) {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("com.h2database:h2:1.4.200")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
         implementation("org.springframework.boot:spring-boot-starter-batch:2.5.1")
         // For NioEventLoopGroup
         implementation("io.netty:netty-all:4.1.68.Final")
