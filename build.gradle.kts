@@ -29,6 +29,7 @@ configure(subprojects.filter { it.name == "springdb" }) {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-jdbc")
         implementation("com.h2database:h2:1.4.200")
+        implementation("mysql:mysql-connector-java:8.0.25")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testCompileOnly("org.projectlombok:lombok")

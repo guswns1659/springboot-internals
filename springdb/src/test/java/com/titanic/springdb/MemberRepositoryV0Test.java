@@ -1,10 +1,12 @@
 package com.titanic.springdb;
 
+import com.titanic.springdb.connection.DBConnectionUtils;
 import com.titanic.springdb.model.Member;
 import com.titanic.springdb.repository.MemberRepositoryV0;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
@@ -18,6 +20,12 @@ class MemberRepositoryV0Test {
     private static final int newMoney = 20000;
 
     private MemberRepositoryV0 memberRepository = new MemberRepositoryV0();
+
+    @Test
+    void connection() {
+        Connection con = DBConnectionUtils.getMysqlConnection();
+        assertThat(con).isNotNull();
+    }
 
     @Test
     void crud() throws SQLException {
