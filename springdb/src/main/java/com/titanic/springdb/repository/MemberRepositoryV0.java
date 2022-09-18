@@ -19,7 +19,7 @@ public class MemberRepositoryV0 {
         PreparedStatement pstmt = null;
 
         try {
-            con = DBConnectionUtils.getMysqlConnection();
+            con = DBConnectionUtils.getH2Connection();
 
             String sql = "insert into member (member_id, money) values (?, ?)";
             pstmt = con.prepareStatement(sql);
@@ -43,7 +43,7 @@ public class MemberRepositoryV0 {
         ResultSet rs = null;
 
         try {
-            con = DBConnectionUtils.getMysqlConnection();
+            con = DBConnectionUtils.getH2Connection();
 
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, id);
@@ -71,7 +71,7 @@ public class MemberRepositoryV0 {
         Connection con = null;
         PreparedStatement pstmt = null;
         try {
-            con = DBConnectionUtils.getMysqlConnection();
+            con = DBConnectionUtils.getH2Connection();
             pstmt = con.prepareStatement(sql);
             pstmt.setInt(1, money);
             pstmt.setString(2, memberId);
@@ -93,7 +93,7 @@ public class MemberRepositoryV0 {
         PreparedStatement pstmt = null;
 
         try {
-            con = DBConnectionUtils.getMysqlConnection();
+            con = DBConnectionUtils.getH2Connection();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, memberId);
             int resultSize = pstmt.executeUpdate();
