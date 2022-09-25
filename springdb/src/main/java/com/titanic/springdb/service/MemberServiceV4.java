@@ -4,10 +4,10 @@ import com.titanic.springdb.model.Member;
 import com.titanic.springdb.repository.MemberRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-public class MemberServiceV4_1 {
+public class MemberServiceV4 {
     private MemberRepository memberRepository;
 
-    public MemberServiceV4_1(MemberRepository memberRepository) {
+    public MemberServiceV4(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 

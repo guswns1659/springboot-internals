@@ -2,7 +2,7 @@ package com.titanic.springdb.service;
 
 import com.titanic.springdb.model.Member;
 import com.titanic.springdb.repository.MemberRepository;
-import com.titanic.springdb.repository.MemberRepositoryV4;
+import com.titanic.springdb.repository.MemberRepositoryV4_2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,16 +14,15 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 @SpringBootTest
 @Slf4j
-class MemberServiceV4_1Test {
+class MemberServiceV4Test {
     @Autowired
-    private MemberServiceV4_1 memberServiceV4_1;
+    private MemberServiceV4 memberServiceV4;
     @Autowired
     private MemberRepository memberRepository;
 
@@ -47,7 +46,7 @@ class MemberServiceV4_1Test {
     }
 
     @AfterEach
-    void tearDown() throws SQLException {
+    void tearDown() {
         log.info("tearDown start");
         memberRepository.delete(MEMBER1);
         memberRepository.delete(MEMBER2);
@@ -57,7 +56,7 @@ class MemberServiceV4_1Test {
     @Test
     void 이체중_실패_트랜잭션롤백() {
         // when
-        Throwable throwable = catchThrowable(() -> memberServiceV4_1.accountTransfer(MEMBER1, EX_MEMBER, 2000));
+        Throwable throwable = catchThrowable(() -> memberServiceV4.accountTransfer(MEMBER1, EX_MEMBER, 2000));
 
         // then
         assertThat(throwable).isInstanceOf(IllegalStateException.class);
@@ -70,9 +69,9 @@ class MemberServiceV4_1Test {
 
     @Test
     void aop_test() {
-        log.info("memberServiceV4_1 class = {}", memberServiceV4_1.getClass());
+        log.info("memberServiceV4_1 class = {}", memberServiceV4.getClass());
         log.info("memberRepository class = {}", memberRepository.getClass());
-        assertThat(AopUtils.isAopProxy(memberServiceV4_1)).isTrue();
+        assertThat(AopUtils.isAopProxy(memberServiceV4)).isTrue();
         assertThat(AopUtils.isAopProxy(memberRepository)).isFalse();
     }
 
@@ -83,12 +82,12 @@ class MemberServiceV4_1Test {
 
         @Bean
         public MemberRepository memberRepository() {
-            return new MemberRepositoryV4(dataSource);
+            return new MemberRepositoryV4_2(dataSource);
         }
 
         @Bean
-        public MemberServiceV4_1 memberServiceV4_1() {
-            return new MemberServiceV4_1(memberRepository());
+        public MemberServiceV4 memberServiceV4_1() {
+            return new MemberServiceV4(memberRepository());
         }
     }
 }
