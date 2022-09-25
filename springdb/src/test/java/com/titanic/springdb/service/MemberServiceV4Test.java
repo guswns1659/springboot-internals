@@ -2,7 +2,7 @@ package com.titanic.springdb.service;
 
 import com.titanic.springdb.model.Member;
 import com.titanic.springdb.repository.MemberRepository;
-import com.titanic.springdb.repository.MemberRepositoryV4_2;
+import com.titanic.springdb.repository.MemberRepositoryV5;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,7 +82,9 @@ class MemberServiceV4Test {
 
         @Bean
         public MemberRepository memberRepository() {
-            return new MemberRepositoryV4_2(dataSource);
+//            return new MemberRepositoryV4_1(dataSource); // 테스트가 중복돼서 DI만 적용
+//            return new MemberRepositoryV4_2(dataSource);
+            return new MemberRepositoryV5(dataSource);
         }
 
         @Bean
