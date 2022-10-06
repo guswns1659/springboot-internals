@@ -17,6 +17,11 @@ allprojects {
         // lombok
         compileOnly("org.projectlombok:lombok")
         annotationProcessor("org.projectlombok:lombok")
+        testCompileOnly ("org.projectlombok:lombok")
+        testAnnotationProcessor ("org.projectlombok:lombok")
+
+        // h2
+        runtimeOnly("com.h2database:h2:1.4.200")
     }
     tasks {
         "test"(Test::class) {
@@ -28,25 +33,23 @@ allprojects {
 configure(subprojects.filter { it.name == "springdb" }) {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-jdbc")
-        implementation("com.h2database:h2:1.4.200")
         implementation("mysql:mysql-connector-java:8.0.25")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testCompileOnly("org.projectlombok:lombok")
-        testAnnotationProcessor("org.projectlombok:lombok")
     }
 }
 
 configure(subprojects.filter {it.name == "springdb2"}) {
     dependencies {
-        implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
-        implementation ("org.springframework.boot:spring-boot-starter-web")
-        implementation ("com.h2database:h2:1.4.200")
-        implementation ("org.springframework.boot:spring-boot-starter-jdbc")
+        implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+        implementation("org.springframework.boot:spring-boot-starter-web")
+
+        // jdbcTemplate
+        implementation("org.springframework.boot:spring-boot-starter-jdbc")
+        // mybatis
+        implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0")
 
         testImplementation ("org.springframework.boot:spring-boot-starter-test")
-        testCompileOnly ("org.projectlombok:lombok")
-        testAnnotationProcessor ("org.projectlombok:lombok")
     }
 }
 
@@ -71,7 +74,6 @@ configure(subprojects.filter { it.name == "messaging" }) {
         implementation("org.springframework.amqp:spring-rabbit")
         implementation("org.springframework.boot:spring-boot-starter-aop")
         implementation("org.springframework.boot:spring-boot-starter-data-redis")
-        implementation("com.h2database:h2:1.4.200")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("redis.clients:jedis")
 
@@ -84,7 +86,6 @@ configure(subprojects.filter { it.name == "webmvc" }) {
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
-        implementation("com.h2database:h2:1.4.200")
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
         implementation("org.springframework.boot:spring-boot-starter-batch:2.5.1")
@@ -103,6 +104,5 @@ configure(subprojects.filter { it.name == "webflux" }) {
         implementation("org.springframework.boot:spring-boot-starter-webflux")
         // For sync DB wrapping test
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        implementation("com.h2database:h2:1.4.200")
     }
 }
