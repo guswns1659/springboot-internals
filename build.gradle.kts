@@ -50,8 +50,20 @@ configure(subprojects.filter {it.name == "springdb2"}) {
         implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0")
         // jpa
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        //Querydsl 추가
+        implementation ("com.querydsl:querydsl-jpa")
+        annotationProcessor ("com.querydsl:querydsl-apt:${dependencyManagement.importedProperties["querydsl.version"]}:jpa")
+        annotationProcessor ("jakarta.annotation:jakarta.annotation-api")
+        annotationProcessor ("jakarta.persistence:jakarta.persistence-api")
 
         testImplementation ("org.springframework.boot:spring-boot-starter-test")
+    }
+
+    //Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
+    tasks {
+        "clean"(Delete::class) {
+            delete(file("src/main/generated"))
+        }
     }
 }
 
