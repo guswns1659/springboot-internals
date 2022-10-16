@@ -67,6 +67,14 @@ configure(subprojects.filter {it.name == "springdb2"}) {
     }
 }
 
+configure(subprojects.filter { it.name == "springtx" }) {
+    dependencies {
+        // jpa
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        testImplementation ("org.springframework.boot:spring-boot-starter-test")
+    }
+}
+
 configure(subprojects.filter { it.name == "log4j2" }) {
 
     configurations {
