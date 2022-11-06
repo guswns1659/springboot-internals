@@ -30,6 +30,40 @@ allprojects {
     }
 }
 
+configure(subprojects.filter { it.name == "log4j2" }) {
+    configurations {
+        all {
+            exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
+        }
+    }
+
+    dependencies {
+        implementation("org.springframework.boot:spring-boot-starter-log4j2")
+    }
+}
+
+configure(subprojects.filter { it.name == "logtrace" }) {
+    dependencies {
+        implementation("org.springframework.boot:spring-boot-starter-web")
+    }
+}
+
+configure(subprojects.filter { it.name == "messaging" }) {
+
+    dependencies {
+        implementation("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.springframework.kafka:spring-kafka")
+        implementation("org.springframework.amqp:spring-rabbit")
+        implementation("org.springframework.boot:spring-boot-starter-aop")
+        implementation("org.springframework.boot:spring-boot-starter-data-redis")
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+        implementation("redis.clients:jedis")
+
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("org.springframework.kafka:spring-kafka-test")
+    }
+}
+
 configure(subprojects.filter { it.name == "springdb" }) {
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-jdbc")
@@ -75,32 +109,11 @@ configure(subprojects.filter { it.name == "springtx" }) {
     }
 }
 
-configure(subprojects.filter { it.name == "log4j2" }) {
-
-    configurations {
-        all {
-            exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-        }
-    }
-
+configure(subprojects.filter { it.name == "webflux" }) {
     dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-log4j2")
-    }
-}
-
-configure(subprojects.filter { it.name == "messaging" }) {
-
-    dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-web")
-        implementation("org.springframework.kafka:spring-kafka")
-        implementation("org.springframework.amqp:spring-rabbit")
-        implementation("org.springframework.boot:spring-boot-starter-aop")
-        implementation("org.springframework.boot:spring-boot-starter-data-redis")
+        implementation("org.springframework.boot:spring-boot-starter-webflux")
+        // For sync DB wrapping test
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        implementation("redis.clients:jedis")
-
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testImplementation("org.springframework.kafka:spring-kafka-test")
     }
 }
 
@@ -118,13 +131,5 @@ configure(subprojects.filter { it.name == "webmvc" }) {
         annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
-    }
-}
-
-configure(subprojects.filter { it.name == "webflux" }) {
-    dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-webflux")
-        // For sync DB wrapping test
-        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     }
 }
