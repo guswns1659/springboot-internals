@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class JJackRockAdvice {
+public class JJackLockAdvice {
     private final RedisTemplate<String, String> jjackRedisTemplate;
 
     /**
