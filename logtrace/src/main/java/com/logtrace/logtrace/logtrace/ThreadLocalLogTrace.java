@@ -1,34 +1,39 @@
-package com.logtrace.logtrace.trace.hellotrace;
+package com.logtrace.logtrace.logtrace;
 
 import com.logtrace.logtrace.trace.TraceId;
 import com.logtrace.logtrace.trace.TraceStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 @Slf4j
-@Component
-public class HelloTraceV1 {
+public class ThreadLocalLogTrace implements LogTrace {
     private static final String START_PREFIX = "-->";
     private static final String COMPLETE_PREFIX = "<--";
     private static final String EX_PREFIX = "<X-";
 
+    private ThreadLocal<TraceId> traceIdHolder = new ThreadLocal<>();
+
+    @Override
     public TraceStatus begin(String message) {
-        TraceId traceId = new TraceId();
-        long startTime = System.currentTimeMillis();
+        syncTraceId();
+
+        TraceId traceId = traceIdHolder.get();
         log.info("[{}] {}{}",
                 traceId.getId(),
                 addSpace(START_PREFIX, traceId.getLevel()),
                 message
         );
-        return new TraceStatus(traceId, startTime, message);
+
+        return new TraceStatus(traceId, System.currentTimeMillis(), message);
     }
 
+    @Override
     public void end(TraceStatus traceStatus) {
         complete(traceStatus, null);
     }
 
+    @Override
     public void exception(TraceStatus traceStatus, Exception e) {
         complete(traceStatus, e);
     }
@@ -52,6 +57,25 @@ public class HelloTraceV1 {
                     elapsedTime,
                     e.toString()
             );
+        }
+        releaseTraceId();
+    }
+
+    private void releaseTraceId() {
+        TraceId traceId = traceIdHolder.get();
+        if (traceId.isFirstLevel()) {
+            traceIdHolder.remove();
+        } else {
+            traceIdHolder.set(traceId.createPreviousId());
+        }
+    }
+
+    private void syncTraceId() {
+        TraceId traceId = traceIdHolder.get();
+        if (traceId == null) {
+            traceIdHolder.set(new TraceId());
+        } else {
+            traceIdHolder.set(traceId.createNextId());
         }
     }
 

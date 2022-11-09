@@ -1,7 +1,5 @@
-package com.logtrace.logtrace;
+package com.logtrace.logtrace.logtrace;
 
-import com.logtrace.logtrace.logtrace.FieldLogTrace;
-import com.logtrace.logtrace.logtrace.LogTrace;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 public class LogTraceConfig {
     @Bean
     public LogTrace logTrace() {
-        return new FieldLogTrace();
+//        return new FieldLogTrace();
+        return new ThreadLocalLogTrace();
     }
 }

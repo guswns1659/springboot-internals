@@ -18,7 +18,7 @@ public class FieldLogTrace implements LogTrace {
     public TraceStatus begin(String message) {
         syncTraceId();
         long startMs = System.currentTimeMillis();
-        log.info("[{}] {} {}",
+        log.info("[{}] {}{}",
                 traceIdHolder.getId(),
                 addSpace(START_PREFIX, traceIdHolder.getLevel()),
                 message
@@ -41,14 +41,14 @@ public class FieldLogTrace implements LogTrace {
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - traceStatus.getStartTimeMs();
         if (Objects.isNull(e)) {
-            log.info("[{}] {} {} time = {}ms",
+            log.info("[{}] {}{} time = {}ms",
                     traceId.getId(),
                     addSpace(COMPLETE_PREFIX, traceId.getLevel()),
                     traceStatus.getMessage(),
                     elapsedTime
             );
         } else {
-            log.info("[{}] {} {} time = {}ms ex={}",
+            log.info("[{}] {}{} time = {}ms ex={}",
                     traceId.getId(),
                     addSpace(EX_PREFIX, traceId.getLevel()),
                     traceStatus.getMessage(),
