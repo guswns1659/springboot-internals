@@ -1,7 +1,6 @@
 rootProject.name = 'springboot-internals'
 
 include('log4j2')
-include('logtrace')
 include('messaging')
 include('spring-advanced-lecture')
 include('spring-advanced-lecture:one')

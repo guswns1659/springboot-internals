@@ -41,12 +41,6 @@ configure(subprojects.filter { it.name == "log4j2" }) {
     }
 }
 
-configure(subprojects.filter { it.name == "logtrace" }) {
-    dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-web")
-    }
-}
-
 configure(subprojects.filter { it.name == "messaging" }) {
 
     dependencies {
