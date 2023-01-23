@@ -23,10 +23,9 @@ allprojects {
         // h2
         runtimeOnly("com.h2database:h2:1.4.200")
     }
-    tasks {
-        "test"(Test::class) {
-            useJUnitPlatform()
-        }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
 
