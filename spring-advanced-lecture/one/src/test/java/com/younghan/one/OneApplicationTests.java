@@ -1,10 +1,10 @@
-package com.younghan;
+package com.younghan.one;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringAdvancedLectureApplicationTests {
+class OneApplicationTests {
 
     @Test
     void contextLoads() {
