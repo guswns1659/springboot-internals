@@ -2,6 +2,7 @@ package toby.lecture.springbootfirst;
 
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,11 @@ import java.io.IOException;
 public class SpringbootFirstApplication {
 
 	public static void main(String[] args) {
+		GenericApplicationContext context = new GenericApplicationContext();
+		context.registerBean(HelloController.class);
+		context.registerBean(SimpleHelloService.class);
+		context.refresh();
+
 		TomcatServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
 
 		WebServer webServer = serverFactory.getWebServer(servletContext -> servletContext.addServlet("hello", new HttpServlet() {
@@ -25,7 +31,7 @@ public class SpringbootFirstApplication {
 				if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
 					String name = req.getParameter("name");
 
-					HelloController helloController = new HelloController();
+					HelloController helloController = context.getBean(HelloController.class);
 					String res = helloController.hello(name);
 
 					resp.setStatus(HttpStatus.OK.value());
