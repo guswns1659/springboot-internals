@@ -1,5 +1,6 @@
 package toby.lecture.springbootfirst;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,6 @@ public class SpringbootFirstApplication {
     }
 
     public static void main(String[] args) {
-        MySpringApplication.run(SpringbootFirstApplication.class, args);
+        SpringApplication.run(SpringbootFirstApplication.class, args);
     }
 }
