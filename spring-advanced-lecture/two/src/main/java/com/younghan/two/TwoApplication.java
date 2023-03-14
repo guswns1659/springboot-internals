@@ -1,6 +1,6 @@
 package com.younghan.two;
 
-import com.younghan.two.proxy.config.v3_proxyfactory.ProxyFactoryConfigV1;
+import com.younghan.two.proxy.config.v5_autoproxy.AutoProxyConfig;
 import com.younghan.two.proxy.trace.logtrace.LogTrace;
 import com.younghan.two.proxy.trace.logtrace.ThreadLocalLogTrace;
 import org.springframework.boot.SpringApplication;
@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Import;
 //@Import({AppV1Config.class, AppV2Config.class})
 //@Import(DynamicProxyBasicConfig.class)
 //@Import(DynamicProxyFilterConfig.class)
-@Import(ProxyFactoryConfigV1.class)
+//@Import(ProxyFactoryConfigV1.class)
+//@Import(BeanPostProcessorConfig.class)
+@Import(AutoProxyConfig.class)
 @SpringBootApplication(scanBasePackages = "com.younghan.two.proxy.app")
 public class TwoApplication {
 
